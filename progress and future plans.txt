@@ -1,0 +1,24 @@
+Current progress:
+    New version of CDCL SAT solver with increased modularity
+
+Implemented:
+    Watched literals
+    Clause learning and backjump
+    Branching heuristic (VSIDS)
+    Restart
+    Simple CPU time tests
+
+Still working on:
+    Restart and clause deletion based on Literal Block Distance (LBD)
+
+Next to do:
+    Evalutaion methods
+    Data structure and efficiency
+    C/C++ relevant
+
+Reminders for the paper:
+    Laziness trade-offs
+    Other functional SAT solvers' implementation
+    Be more precise with name/versions
+    Terminology explanation (VSIDS)
+    Focus more on RQs

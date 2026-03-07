@@ -1,0 +1,31 @@
+module Test where
+
+import qualified Data.Map as Map
+import System.Environment (getArgs)
+import System.IO
+import System.CPUTime
+import Text.Printf
+
+import Parser
+import Core.Types
+import Preprocess
+import Engine.CDCL as CDCL
+import Engine.DPLL as DPLL
+import Core.Watched
+
+main :: IO ()
+main = do
+    args <- getArgs
+    case args of
+        [file] -> do
+            input <- readFile file
+            start <- getCPUTime
+            let
+                (db, ss) = preprocess $ parse input
+                result = CDCL.cdcl db ss
+            print result
+            end <- getCPUTime
+            let
+                diff = fromIntegral (end - start) / 10^12
+            printf "CPU time: %0.3f sec\n" (diff :: Double)
+        _      -> putStrLn "CNF file required."
