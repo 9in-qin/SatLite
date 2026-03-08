@@ -8,7 +8,7 @@ import Core.Types
 import Core.VarLit (litSign, litToVar)
 
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
-preprocess (cls, (numVars, numClauses)) =
+preprocess (ogCls, (numVars, numClauses)) =
     (ClauseDB
     { clauses       = dbClauses
     , learnedIDs    = []
@@ -23,13 +23,22 @@ preprocess (cls, (numVars, numClauses)) =
     , trail      = foldl' trailConstructor [] unitCls
     , varActivity =  Map.fromList [(Var varID, 1.0) | varID <- [0..numVars-1]]
     , conflictCount = 0
-    --, restartCount = 0
     , restartThreshold = 100
     })
     where
         dbClauses = Map.fromList $ zipWith listToClause [0..] cls'
         unitCls   = [ l | [l] <- Map.elems dbClauses ]
         cls'      = map nub cls
+        cls       = map (map (\x -> x - 2)) $ adjustIndex ogCls
+
+adjustIndex :: [[Int]] -> [[Int]]
+adjustIndex = map step
+    where
+        step = map intToLit
+        intToLit :: Int -> Int
+        intToLit i
+            | i > 0 = 2 * i
+            | otherwise = 2 * (-i) + 1
 
 assignmentConstructor :: Map.Map Var Bool -> Lit -> Map.Map Var Bool
 assignmentConstructor currentAssignment lit = Map.insert (litToVar lit) (litSign lit) currentAssignment
