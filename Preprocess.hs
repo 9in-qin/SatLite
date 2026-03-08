@@ -8,7 +8,7 @@ import Core.Types
 import Core.VarLit (litSign, litToVar)
 
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
-preprocess (ogCls, (numVars, numClauses)) =
+preprocess (cls, (numVars, numClauses)) =
     (ClauseDB
     { clauses       = dbClauses
     , learnedIDs    = []
@@ -28,8 +28,7 @@ preprocess (ogCls, (numVars, numClauses)) =
     where
         dbClauses = Map.fromList $ zipWith listToClause [0..] cls'
         unitCls   = [ l | [l] <- Map.elems dbClauses ]
-        cls'      = map nub cls
-        cls       = map (map (\x -> x - 2)) $ adjustIndex ogCls
+        cls'      = nub $ map (map (\x -> x - 2)) $ adjustIndex cls
 
 adjustIndex :: [[Int]] -> [[Int]]
 adjustIndex = map step
