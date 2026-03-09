@@ -16,6 +16,6 @@ mostActiveVar totalVar asgmt varAC
         where
             asgmt' = Map.toList asgmt
             assignedVar = map fst asgmt'
-            notAssigned = [Var i | i <- [1..totalVar], Var i `notElem` assignedVar]
+            notAssigned = [Var i | i <- [0..totalVar-1], Var i `notElem` assignedVar]
             nextVar = Map.foldlWithKey' mostActive (Var 0, 0.0) (Map.restrictKeys varAC (Set.fromList notAssigned))
             mostActive (var, score) var' score' = if score' > score then (var', score') else (var, score)
