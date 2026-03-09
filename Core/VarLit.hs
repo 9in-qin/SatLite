@@ -26,7 +26,7 @@ ifLiteralTrue :: Lit -> Bool -> Bool
 ifLiteralTrue (Lit i) val = (even i && val) || (odd i && not val)
 
 literalType :: Assignment -> Lit -> LitType
-literalType asgmt (Lit i) =
-    case Map.lookup (litToVar (Lit i)) asgmt of
+literalType asgmt lit =
+    case Map.lookup (litToVar lit) asgmt of
         Nothing  -> LitUnassigned
-        Just val -> if (even i && val) || (odd i && not val) then LitTrue else LitFalse
+        Just val -> if (litSign lit && val) || (litSign lit && not val) then LitTrue else LitFalse
