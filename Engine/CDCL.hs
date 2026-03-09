@@ -20,8 +20,8 @@ cdcl db ss =
     in case hasConflict propagation of
         (db', ss', Just cid) -> case level ss' of -- ss or ss'? as the level has not changed yet (ss' better)
             0  -> UNSAT
-            lv -> let (extractedInfo1, extractedInfo2, extractedInfo3) = extractInfo (db', ss', cid)
-                      (analyzed1, analyzed2) = analyze (extractedInfo1, extractedInfo2, extractedInfo3) (clauses db')
+            lv -> let (conflictClsToVar, currentLevelVars, currentLevelTrail) = extractInfo (db', ss', cid)
+                      (analyzed1, analyzed2) = analyze (conflictClsToVar, currentLevelVars, currentLevelTrail) (clauses db')
                       learnedClause  = learn analyzed1 (assignment ss')
                       (newDB, newSS) = backjump db' ss' learnedClause analyzed2 lv
 
@@ -40,7 +40,7 @@ cdcl db ss =
         (db', ss', Nothing)  -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of -- readers: what unAssigned?
             Nothing      -> SAT (db', ss')
             Just nextVar -> let ss0 = ss' {level = level ss' + 1, assignment = Map.insert nextVar True $ assignment ss',
-                                          queue = enqueue (Lit $ getVar nextVar) $ queue ss',
+                                          queue = enqueue (varToLit nextVar) $ queue ss',
                                           trail = trailAppend (trail ss') nextVar True (level ss' + 1) Decided}
                             in cdcl db' ss0
 
@@ -49,7 +49,7 @@ propagate db ss =
     case Seq.viewl $ queue ss of -- may need to replace with helper function for better modularity (later)
         Seq.EmptyL          -> (db, ss, NoConflict) -- if there is nothing to be propagated in the queue, do nothing
         (Lit i) Seq.:< rest ->
-            case processWatched (Lit (-i)) db ss of -- negation lit is better, revise later
+            case processWatched (negateLit (Lit i)) db ss of -- negation lit is better, revise later
                 (db', ss', DoesConflict cid ) -> (db', ss', DoesConflict cid)
                 (db', ss', NoConflict)        -> propagate db' ss'
 
@@ -86,8 +86,8 @@ learn vars asgmt = map step vars
     where
         step :: Var -> Lit
         step var
-            | asgmt Map.! var = Lit $ - getVar var -- learn the opposite
-            | otherwise       = Lit $ getVar var
+            | asgmt Map.! var = negateLit $ varToLit var -- learn the opposite
+            | otherwise       = varToLit var
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl theVar currentLevel =
@@ -110,7 +110,7 @@ backjump db ss learnedCl theVar currentLevel =
 --VSIDS related functions
 updateActivity :: VarActivity -> Clause -> VarActivity
 updateActivity = --foldl' updateCertainVar
-    foldl' (\ac (Lit i) -> Map.insertWith (+) (Var i) 1.0 ac)
+    foldl' (\ac (Lit i) -> Map.insertWith (+) (litToVar(Lit i)) 1.0 ac)
     -- where
     --     updateCertainVar :: Map.Map Var Double -> Lit -> Map.Map Var Double
     --     updateCertainVar ac (Lit i) = Map.insertWith (+) (Var i) 1.0 ac
