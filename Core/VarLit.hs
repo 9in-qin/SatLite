@@ -29,4 +29,4 @@ literalType :: Assignment -> Lit -> LitType
 literalType asgmt lit =
     case Map.lookup (litToVar lit) asgmt of
         Nothing  -> LitUnassigned
-        Just val -> if (litSign lit && val) || (litSign lit && not val) then LitTrue else LitFalse
+        Just val -> if (litSign lit && val) || (not (litSign lit) && not val) then LitTrue else LitFalse
