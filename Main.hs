@@ -23,4 +23,5 @@ main = do
             -- print $ dpll db ss
             -- print $ cdcl db ss
             print db
+            print ss
         _      -> putStrLn "CNF file required."
