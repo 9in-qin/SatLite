@@ -1,4 +1,4 @@
-module Main where
+module MainOld where
 
 import qualified Data.Map as Map
 import System.Environment (getArgs)
