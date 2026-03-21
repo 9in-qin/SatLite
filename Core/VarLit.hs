@@ -3,6 +3,7 @@ module Core.VarLit where
 import Core.Types
 import Data.Bits
 import qualified Data.Map as Map
+import qualified Data.IntMap as IntMap
 
 getVar :: Var -> Int
 getVar (Var i) = i
@@ -27,6 +28,6 @@ ifLiteralTrue (Lit i) val = (even i && val) || (odd i && not val)
 
 literalType :: Assignment -> Lit -> LitType
 literalType asgmt lit =
-    case Map.lookup (litToVar lit) asgmt of
+    case IntMap.lookup (getVar $ litToVar lit) asgmt of
         Nothing  -> LitUnassigned
         Just val -> if (litSign lit && val) || (not (litSign lit) && not val) then LitTrue else LitFalse

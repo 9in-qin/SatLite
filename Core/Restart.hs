@@ -1,6 +1,7 @@
 module Core.Restart where
 
 import qualified Data.Map as Map
+import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Data.List
 
@@ -9,7 +10,7 @@ import Preprocess
 
 restart :: ClauseDB -> SolverState -> SolverState
 restart db ss =
-    ss {assignment = foldl' assignmentConstructor Map.empty unitCls,
+    ss {assignment = foldl' assignmentConstructor IntMap.empty unitCls,
         level = 0,
         queue = enqueueUnitClauses cls Seq.empty,
         trail = foldl' trailConstructor [] unitCls,

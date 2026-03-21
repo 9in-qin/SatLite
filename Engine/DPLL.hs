@@ -3,6 +3,7 @@ module Engine.DPLL where
 import Control.Applicative
 import Data.Maybe
 import qualified Data.Map as Map
+import qualified Data.IntMap as IntMap
 
 import Core.Types
 import Core.VarLit
@@ -23,7 +24,7 @@ propagate cls totalVar asgmt =
 
 assignVar :: Clauses -> Assignment -> Var -> Bool -> Maybe Assignment
 assignVar cls asgmt (Var i) val =
-    let asgmt' = Map.insert (Var i) val asgmt
+    let asgmt' = IntMap.insert i val asgmt
     in if leadsToFalseClause cls asgmt' (Var i)
             then Nothing
             else Just asgmt'
@@ -41,7 +42,7 @@ getLitValue :: Assignment -> Lit -> Maybe Bool
 getLitValue asgmt (Lit i)
     | i > 0     = result
     | otherwise = fmap not result
-    where result = Map.lookup (Var $ abs i) asgmt
+    where result = IntMap.lookup (abs i) asgmt
 
 nothingOrTrue :: Maybe Bool -> Bool
 nothingOrTrue Nothing = True

@@ -1,7 +1,8 @@
 module Engine.CDCL where
 
 import qualified Data.Map as Map
-import qualified Data.Set as Set
+import qualified Data.IntMap as IntMap
+import qualified Data.IntSet as IntSet
 import qualified Data.Sequence as Seq
 import Data.List
 
@@ -39,7 +40,7 @@ cdcl db ss =
         --(db', ss', Nothing)  -> case unAssigned (varCount db') (assignment ss') of -- readers: what unAssigned?
         (db', ss', Nothing)  -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of -- readers: what unAssigned?
             Nothing      -> SAT (db', ss')
-            Just nextVar -> let ss0 = ss' {level = level ss' + 1, assignment = Map.insert nextVar True $ assignment ss',
+            Just nextVar -> let ss0 = ss' {level = level ss' + 1, assignment = IntMap.insert (getVar nextVar) True $ assignment ss',
                                           queue = enqueue (varToLit nextVar) $ queue ss',
                                           trail = trailAppend (trail ss') nextVar True (level ss' + 1) Decided}
                             in cdcl db' ss0
@@ -86,7 +87,7 @@ learn vars asgmt = map step vars
     where
         step :: Var -> Lit
         step var
-            | asgmt Map.! var = negateLit $ varToLit var -- learn the opposite
+            | asgmt IntMap.! getVar var = negateLit $ varToLit var -- learn the opposite
             | otherwise       = varToLit var
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
@@ -99,18 +100,18 @@ backjump db ss learnedCl theVar currentLevel =
                         else maximum [level | (var, _, level, _) <- tr, var `elem` map litToVar learnedCl, level < currentLevel]
         updatedQueue = enqueue theLiteral Seq.empty
         updatedTrail = (theVar, theValue, backjumpLevel, Propagated newCID) : filter (\(_, _, lv, _) -> lv <= backjumpLevel) tr
-        updatedAssignment = Map.insert theVar theValue (Map.restrictKeys (assignment ss) (Set.fromList keptVars))
+        updatedAssignment = IntMap.insert (getVar theVar) theValue (IntMap.restrictKeys (assignment ss) (IntSet.fromList keptVars))
         newCID = length cls
         cls = clauses db
         tr = trail ss
         theLiteral = head $ filter (\lit -> litToVar lit == theVar) learnedCl
         theValue = litSign theLiteral
-        keptVars = map (\(var, _, _, _) -> var) updatedTrail
+        keptVars = map (\(var, _, _, _) -> getVar var) updatedTrail
 
 --VSIDS related functions
 updateActivity :: VarActivity -> Clause -> VarActivity
 updateActivity = --foldl' updateCertainVar
-    foldl' (\ac (Lit i) -> Map.insertWith (+) (litToVar(Lit i)) 1.0 ac)
+    foldl' (\ac (Lit i) -> Map.insertWith (+) (litToVar (Lit i)) 1.0 ac)
     -- where
     --     updateCertainVar :: Map.Map Var Double -> Lit -> Map.Map Var Double
     --     updateCertainVar ac (Lit i) = Map.insertWith (+) (Var i) 1.0 ac

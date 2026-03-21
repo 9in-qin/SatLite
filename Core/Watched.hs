@@ -8,6 +8,7 @@ import Core.VarLit
 import Core.Queue
 import Core.Trail
 import Data.List (foldl')
+import qualified Data.IntMap as IntMap
 
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =
@@ -37,7 +38,7 @@ processInfluenced lit cls db ss =
 
 checkClause :: Lit -> CID -> Clause -> ClauseDB -> SolverState -> (Lit, ClauseDB, SolverState, IfConflict)
 checkClause lit cid cl db ss =
-    case Map.lookup theOtherWatchVar asgmt of
+    case IntMap.lookup (getVar theOtherWatchVar) asgmt of
         Just otherWatchValue ->
             if ifLiteralTrue theOtherWatch otherWatchValue
                 then (lit, db, ss, NoConflict) -- if the other watch is already true, leave this clause alone
@@ -46,7 +47,7 @@ checkClause lit cid cl db ss =
             case findNewWatch asgmt cl lit theOtherWatch of
                     Nothing   -> let q'               = enqueue theOtherWatch q
                                      otherWatchNewVal = litSign theOtherWatch
-                                     assignment'      = Map.insert theOtherWatchVar otherWatchNewVal (assignment ss)
+                                     assignment'      = IntMap.insert (getVar theOtherWatchVar) otherWatchNewVal (assignment ss)
                                      trail'           = trailAppend (trail ss) theOtherWatchVar otherWatchNewVal l (Propagated cid)
                                  in (lit, db, ss {assignment = assignment', queue = q', trail = trail'}, NoConflict)
                     Just lit0 -> helper lit0

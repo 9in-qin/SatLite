@@ -1,11 +1,12 @@
 module Preprocess where
 
 import qualified Data.Map as Map
+import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Data.List
 
 import Core.Types
-import Core.VarLit (litSign, litToVar)
+import Core.VarLit
 
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
 preprocess (cls, (numVars, numClauses)) =
@@ -17,7 +18,7 @@ preprocess (cls, (numVars, numClauses)) =
     , varCount      = numVars
     },
     SolverState
-    { assignment = foldl' assignmentConstructor Map.empty unitCls
+    { assignment = foldl' assignmentConstructor IntMap.empty unitCls
     , level      = 0
     , queue      = enqueueUnitClauses dbClauses Seq.empty
     , trail      = foldl' trailConstructor [] unitCls
@@ -39,8 +40,8 @@ adjustIndex = map step
             | i > 0 = 2 * i
             | otherwise = 2 * (-i) + 1
 
-assignmentConstructor :: Map.Map Var Bool -> Lit -> Map.Map Var Bool
-assignmentConstructor currentAssignment lit = Map.insert (litToVar lit) (litSign lit) currentAssignment
+assignmentConstructor :: IntMap.IntMap Bool -> Lit -> IntMap.IntMap Bool
+assignmentConstructor currentAssignment lit = IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
 
 trailConstructor :: Trail -> Lit -> Trail
 trailConstructor tr lit = (litToVar lit, litSign lit, 0, Propagated 0):tr

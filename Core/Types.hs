@@ -2,6 +2,7 @@ module Core.Types where
 
 import qualified Data.Map as Map
 import qualified Data.Sequence as Seq
+import qualified Data.IntMap as IntMap
 
 newtype Var = Var Int deriving (Eq, Ord, Show)
 newtype Lit = Lit Int deriving (Eq, Ord, Show)
@@ -12,7 +13,7 @@ type Clause        = [Lit]
 type Clauses       = Map.Map CID Clause
 type WatchedLits   = Map.Map CID (Lit, Lit)
 type LitsToClauses = Map.Map Lit [CID]
-type Assignment    = Map.Map Var Bool
+type Assignment    = IntMap.IntMap Bool
 data Reason        = Decided | Propagated CID deriving (Eq, Ord, Show)
 type Trail         = [TrailElement]
 type TrailElement  = (Var, Bool, Level, Reason)
