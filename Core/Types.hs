@@ -48,6 +48,5 @@ data SolverState = SolverState
     , trail      :: Trail
     , varActivity :: VarActivity
     , conflictCount :: Int
-    --, restartCount :: Int
     , restartThreshold :: Int
     } deriving (Show)
