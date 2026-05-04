@@ -31,7 +31,7 @@ assignVar cls asgmt (Var i) val =
 
 leadsToFalseClause :: Clauses -> Assignment -> Var -> Bool
 leadsToFalseClause cls asgmt (Var i) =
-    let listCls = Map.toList cls
+    let listCls = IntMap.toList cls
         cls' = [(cid, lits)| (cid, lits) <- listCls, Lit i' <- lits, abs i' == i]
     in any (allFalse asgmt) cls'
     where

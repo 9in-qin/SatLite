@@ -59,7 +59,7 @@ hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
 hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
 
 extractInfo :: (ClauseDB, SolverState, CID) -> ([Var], [Var], [TrailElement])
-extractInfo (db, ss, cid) = let conflictClsToVar  = map litToVar $ clauses db Map.! cid
+extractInfo (db, ss, cid) = let conflictClsToVar  = map litToVar $ clauses db IntMap.! cid
                                 currentLevelTrail = [(var, val, lv, r) | (var, val, lv, r) <- trail ss, lv == currentLevel]
                                 currentLevelVars  = map (\(var, _, _, _) -> var) currentLevelTrail
                             in (conflictClsToVar, currentLevelVars, currentLevelTrail)
@@ -79,7 +79,7 @@ analyze (vars, currentLevelVars, tr) cls
                 | var `elem` currentLevelVars =
                     case [r | (v, _, _, r) <- tr, v == var] of
                         [Decided]        -> [var]
-                        [Propagated cid] -> filter (/= var) $ map litToVar $ cls Map.! cid
+                        [Propagated cid] -> filter (/= var) $ map litToVar $ cls IntMap.! cid
                 | otherwise = [var]
 
 learn :: [Var] -> Assignment -> [Lit]
@@ -95,7 +95,7 @@ backjump db ss learnedCl theVar currentLevel =
     (db{clauses = updatedClauses},
      ss{assignment = updatedAssignment, level = backjumpLevel, queue = updatedQueue, trail = updatedTrail})
     where
-        updatedClauses = Map.insert newCID learnedCl cls
+        updatedClauses = IntMap.insert newCID learnedCl cls
         backjumpLevel = if length learnedCl == 1 then 0
                         else maximum [level | (var, _, level, _) <- tr, var `elem` map litToVar learnedCl, level < currentLevel]
         updatedQueue = enqueue theLiteral Seq.empty

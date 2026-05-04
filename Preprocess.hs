@@ -27,8 +27,8 @@ preprocess (cls, (numVars, numClauses)) =
     , restartThreshold = 100
     })
     where
-        dbClauses = Map.fromList $ zipWith listToClause [0..] cls'
-        unitCls   = [ l | [l] <- Map.elems dbClauses ]
+        dbClauses = IntMap.fromList $ zipWith listToClause [0..] cls'
+        unitCls   = [ l | [l] <- IntMap.elems dbClauses ]
         cls'      = nub $ map (map (\x -> x - 2)) $ adjustIndex cls
 
 adjustIndex :: [[Int]] -> [[Int]]
@@ -51,7 +51,7 @@ listToClause cid l = (cid, map Lit l)
 
 -- | Enqueue all unit literals in the BCPqueue for the first round propagation
 enqueueUnitClauses :: Clauses -> BCPqueue -> BCPqueue
-enqueueUnitClauses cls q = q Seq.>< Seq.fromList [ l | [l] <- Map.elems cls ]
+enqueueUnitClauses cls q = q Seq.>< Seq.fromList [ l | [l] <- IntMap.elems cls ]
 
 watching :: CID -> [Int] -> (CID, (Lit, Lit))
 watching cid [x]     = (cid, (Lit x, Lit x))

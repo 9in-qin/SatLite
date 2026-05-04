@@ -2,6 +2,7 @@ module Core.Watched where
 
 import qualified Data.Map as Map
 import qualified Data.Set as Set
+import qualified Data.IntSet as IntSet
 
 import Core.Types
 import Core.VarLit
@@ -24,11 +25,11 @@ processWatched lit db ss =
         litsToCls = litsToClauses db
 
 influencedClauses :: [CID] -> Clauses -> Clauses
-influencedClauses cids cls = Map.restrictKeys cls (Set.fromList cids) -- restrictKeys is more efficient
+influencedClauses cids cls = IntMap.restrictKeys cls (IntSet.fromList cids) -- restrictKeys is more efficient
 
 processInfluenced :: Lit -> Clauses -> ClauseDB -> SolverState -> (Lit, ClauseDB, SolverState, IfConflict)
 processInfluenced lit cls db ss =
-    Map.foldlWithKey' step (lit, db, ss, NoConflict) cls
+    IntMap.foldlWithKey' step (lit, db, ss, NoConflict) cls
     where
         step (lit0, db0, ss0, DoesConflict cid) _ _ = (lit0, db0, ss0, DoesConflict cid)
         step (lit0, db0, ss0, NoConflict) cid cl    =

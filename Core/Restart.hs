@@ -17,6 +17,6 @@ restart db ss =
         conflictCount = 0,
         restartThreshold = floor (fromIntegral threshold * 1.25)}
     where
-        unitCls = [ l | [l] <- Map.elems cls ]
+        unitCls = [ l | [l] <- IntMap.elems cls ]
         cls     = clauses db
         threshold = restartThreshold ss
