@@ -13,8 +13,8 @@ preprocess (cls, (numVars, numClauses)) =
     (ClauseDB
     { clauses       = dbClauses
     , learnedIDs    = []
-    , watchedLits   = Map.fromList $ zipWith watching [0..] cls'
-    , litsToClauses = Map.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
+    , watchedLits   = IntMap.fromList $ zipWith watching [0..] cls'
+    , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
     , varCount      = numVars
     },
     SolverState
@@ -57,6 +57,10 @@ watching :: CID -> [Int] -> (CID, (Lit, Lit))
 watching cid [x]     = (cid, (Lit x, Lit x))
 watching cid (x:y:_) = (cid, (Lit x, Lit y))
 
-watchedBy :: CID -> [Int] -> [(Lit, [CID])]
-watchedBy cid [x]     = [(Lit x, [cid])]
-watchedBy cid (x:y:_) = [(Lit x, [cid]), (Lit y, [cid])]
+watchedBy :: CID -> [Int] -> [(Int, [CID])]
+watchedBy cid [x]     = [(x, [cid])]
+watchedBy cid (x:y:_) = [(x, [cid]), (y, [cid])]
+
+-- watchedBy :: CID -> [Int] -> [(Lit, [CID])]
+-- watchedBy cid [x]     = [(Lit x, [cid])]
+-- watchedBy cid (x:y:_) = [(Lit x, [cid]), (Lit y, [cid])]

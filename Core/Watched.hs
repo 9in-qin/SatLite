@@ -13,7 +13,7 @@ import qualified Data.IntMap as IntMap
 
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =
-    case Map.lookup lit litsToCls of
+    case IntMap.lookup (getLit lit) litsToCls of
         Nothing    -> (db, ss {queue = dequeue $ queue ss}, NoConflict) --dequeue is important, or cdcl will be an infinite loop
         Just cids  ->
             let influencedCls = influencedClauses cids cls -- foldWithKey' omit toList
@@ -55,7 +55,7 @@ checkClause lit cid cl db ss =
     where
         cls       = clauses db
         dbWatchedLits = watchedLits db
-        watched   = dbWatchedLits Map.! cid
+        watched   = dbWatchedLits IntMap.! cid
         theOtherWatch = let first = fst watched in if first == lit then snd watched else first
         theOtherWatchVar = litToVar theOtherWatch
         litsToCls = litsToClauses db
@@ -63,22 +63,22 @@ checkClause lit cid cl db ss =
         q         = queue ss
         l         = level ss
 
-        helper newWatch = let updatedWatchedLits = Map.insert cid (newWatch, theOtherWatch) dbWatchedLits
+        helper newWatch = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
                               updatedLitsToClauses =
-                                 case Map.lookup newWatch litsToCls of
-                                     Just newWatchedBy -> Map.insert newWatch (cid:newWatchedBy) litsToCls
-                                     Nothing           -> Map.insert newWatch [cid] litsToCls
+                                 case IntMap.lookup newWatch litsToCls of
+                                     Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
+                                     Nothing           -> IntMap.insert newWatch [cid] litsToCls
                               -- the following line update the original "lit" by removing it, which is a watched literal before
-                              updatedLitsToClauses' = Map.insert lit [cid' | cid' <- litsToCls Map.! lit, cid' /= cid] updatedLitsToClauses
+                              updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
                           in (lit, db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
 
-findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
+findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Int
 findNewWatch asgmt [_] lit0 lit1   = Nothing -- should be checked ealier instead of in this function, revise later
 findNewWatch asgmt [_,_] lit0 lit1 = Nothing
 findNewWatch asgmt cl lit0 lit1    =
     case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
         (_, LitFalse)  -> Nothing
-        (resultLit, _) -> resultLit
+        (Just resultLit, _) -> Just (getLit resultLit)
     where
         newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
 
@@ -88,3 +88,20 @@ findNewWatch asgmt cl lit0 lit1    =
             case literalType asgmt lit of
                 LitFalse -> (potentialLit, litType)
                 tOrU     -> (Just lit, tOrU)
+
+-- findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
+-- findNewWatch asgmt [_] lit0 lit1   = Nothing -- should be checked ealier instead of in this function, revise later
+-- findNewWatch asgmt [_,_] lit0 lit1 = Nothing
+-- findNewWatch asgmt cl lit0 lit1    =
+--     case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
+--         (_, LitFalse)  -> Nothing
+--         (resultLit, _) -> resultLit
+--     where
+--         newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
+
+--         trueOrUnassigned :: (Maybe Lit, LitType) -> Lit -> (Maybe Lit, LitType)
+--         trueOrUnassigned (potentialLit, LitTrue) _   = (potentialLit, LitTrue)
+--         trueOrUnassigned (potentialLit, litType) lit =
+--             case literalType asgmt lit of
+--                 LitFalse -> (potentialLit, litType)
+--                 tOrU     -> (Just lit, tOrU)
