@@ -31,7 +31,7 @@ cdcl db ss =
                       newConflictCount = conflictCount newSS + 1
                       refreshActivity = if newConflictCount `mod` 100 /= 0
                                         then updateActivity (varActivity newSS) learnedClause
-                                        else Map.map (* 0.5) $ updateActivity (varActivity newSS) learnedClause
+                                        else IntMap.map (* 0.5) $ updateActivity (varActivity newSS) learnedClause
 
                       threshold = restartThreshold newSS
                       ifRestart = if newConflictCount == threshold then restart newDB newSS' else newSS'
@@ -111,7 +111,7 @@ backjump db ss learnedCl theVar currentLevel =
 --VSIDS related functions
 updateActivity :: VarActivity -> Clause -> VarActivity
 updateActivity = --foldl' updateCertainVar
-    foldl' (\ac (Lit i) -> Map.insertWith (+) (litToVar (Lit i)) 1.0 ac)
+    foldl' (\ac (Lit i) -> IntMap.insertWith (+) (getVar $ litToVar (Lit i)) 1.0 ac)
     -- where
     --     updateCertainVar :: Map.Map Var Double -> Lit -> Map.Map Var Double
     --     updateCertainVar ac (Lit i) = Map.insertWith (+) (Var i) 1.0 ac

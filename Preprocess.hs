@@ -22,7 +22,7 @@ preprocess (cls, (numVars, numClauses)) =
     , level      = 0
     , queue      = enqueueUnitClauses dbClauses Seq.empty
     , trail      = foldl' trailConstructor [] unitCls
-    , varActivity =  Map.fromList [(Var varID, 1.0) | varID <- [0..numVars-1]]
+    , varActivity =  IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]
     , conflictCount = 0
     , restartThreshold = 100
     })

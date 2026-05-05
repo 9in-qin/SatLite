@@ -1,28 +1,28 @@
-	Mon May  4 19:12 2026 Time and Allocation Profiling Report  (Final)
+	Tue May  5 10:31 2026 Time and Allocation Profiling Report  (Final)
 
 	   haskell-sat-solver +RTS -p -RTS Test/UUF100.430.1000/uuf100-01.cnf
 
-	total time  =        0.60 secs   (604 ticks @ 1000 us, 1 processor)
-	total alloc = 761,904,472 bytes  (excludes profiling overheads)
+	total time  =        0.64 secs   (637 ticks @ 1000 us, 1 processor)
+	total alloc = 763,722,624 bytes  (excludes profiling overheads)
 
 COST CENTRE       MODULE       SRC                              %time %alloc
 
-==                Core.Types   Core/Types.hs:7:33-34             29.8    0.0
-analyze           Engine.CDCL  Engine/CDCL.hs:(70,1)-(83,35)     24.7   15.8
-checkClause       Core.Watched Core/Watched.hs:(41,1)-(73,129)   18.2   43.7
-backjump          Engine.CDCL  Engine/CDCL.hs:(94,1)-(109,67)     6.1    9.6
-compare           Core.Types   Core/Types.hs:8:37-39              3.6    0.0
-influencedClauses Core.Watched Core/Watched.hs:28:1-75            3.0    8.7
-litToVar          Core.VarLit  Core/VarLit.hs:18:1-41             2.3    4.6
-mostActiveVar     Decide.VSIDS Decide/VSIDS.hs:(12,1)-(22,43)     1.8    0.1
-findNewWatch      Core.Watched Core/Watched.hs:(76,1)-(90,44)     1.7    0.3
-processInfluenced Core.Watched Core/Watched.hs:(31,1)-(38,90)     1.5    4.2
-processWatched    Core.Watched Core/Watched.hs:(15,1)-(25,36)     1.3    1.3
-extractInfo       Engine.CDCL  Engine/CDCL.hs:(62,1)-(67,55)      0.8    2.7
-enqueue           Core.Queue   Core/Queue.hs:8:1-24               0.7    1.4
-updateActivity    Engine.CDCL  Engine/CDCL.hs:(113,1)-(114,72)    0.3    1.8
-propagate         Engine.CDCL  Engine/CDCL.hs:(49,1)-(55,66)      0.2    1.4
-dequeue           Core.Queue   Core/Queue.hs:(11,1)-(13,25)       0.2    1.3
+==                Core.Types   Core/Types.hs:7:33-34             37.5    0.0
+analyze           Engine.CDCL  Engine/CDCL.hs:(70,1)-(83,35)     23.5   15.8
+checkClause       Core.Watched Core/Watched.hs:(41,1)-(73,129)   14.4   43.6
+backjump          Engine.CDCL  Engine/CDCL.hs:(94,1)-(109,67)     6.4    9.6
+influencedClauses Core.Watched Core/Watched.hs:28:1-75            2.8    8.7
+litToVar          Core.VarLit  Core/VarLit.hs:18:1-41             2.8    4.6
+findNewWatch      Core.Watched Core/Watched.hs:(76,1)-(90,44)     1.9    0.3
+literalType       Core.VarLit  Core/VarLit.hs:(30,1)-(33,104)     1.6    0.0
+compare           Core.Types   Core/Types.hs:8:37-39              1.6    0.0
+processInfluenced Core.Watched Core/Watched.hs:(31,1)-(38,90)     1.1    4.2
+processWatched    Core.Watched Core/Watched.hs:(15,1)-(25,36)     0.8    1.3
+enqueue           Core.Queue   Core/Queue.hs:8:1-24               0.8    1.4
+dequeue           Core.Queue   Core/Queue.hs:(11,1)-(13,25)       0.6    1.3
+updateActivity    Engine.CDCL  Engine/CDCL.hs:(113,1)-(114,84)    0.5    2.0
+extractInfo       Engine.CDCL  Engine/CDCL.hs:(62,1)-(67,55)      0.3    2.7
+propagate         Engine.CDCL  Engine/CDCL.hs:(49,1)-(55,66)      0.0    1.4
 
 
                                                                                                      individual      inherited
@@ -30,20 +30,18 @@ COST CENTRE               MODULE                  SRC                           
 
 MAIN                      MAIN                    <built-in>                      192           0    0.0    0.0   100.0  100.0
  CAF                      Core.Types              <entire-module>                 383           0    0.0    0.0     0.0    0.0
-  /=                      Core.Types              Core/Types.hs:7:33-34           464           1    0.0    0.0     0.0    0.0
-  /=                      Core.Types              Core/Types.hs:8:33-34           431           1    0.0    0.0     0.0    0.0
-  ==                      Core.Types              Core/Types.hs:7:33-34           457           1    0.0    0.0     0.0    0.0
-  ==                      Core.Types              Core/Types.hs:8:33-34           426           1    0.0    0.0     0.0    0.0
-  >=                      Core.Types              Core/Types.hs:7:37-39           409           1    0.0    0.0     0.0    0.0
-  compare                 Core.Types              Core/Types.hs:7:37-39           480           1    0.0    0.0     0.0    0.0
-  compare                 Core.Types              Core/Types.hs:8:37-39           415           1    0.0    0.0     0.0    0.0
+  /=                      Core.Types              Core/Types.hs:7:33-34           461           1    0.0    0.0     0.0    0.0
+  /=                      Core.Types              Core/Types.hs:8:33-34           428           1    0.0    0.0     0.0    0.0
+  ==                      Core.Types              Core/Types.hs:7:33-34           454           1    0.0    0.0     0.0    0.0
+  ==                      Core.Types              Core/Types.hs:8:33-34           423           1    0.0    0.0     0.0    0.0
+  compare                 Core.Types              Core/Types.hs:8:37-39           412           1    0.0    0.0     0.0    0.0
   show                    Core.Types              Core/Types.hs:25:68-71          386           1    0.0    0.0     0.0    0.0
  CAF                      Parser                  <entire-module>                 373           0    0.0    0.0     0.0    0.0
   parse                   Parser                  Parser.hs:(7,1)-(32,54)         400           0    0.0    0.0     0.0    0.0
  CAF                      Preprocess              <entire-module>                 372           0    0.0    0.0     0.0    0.0
   adjustIndex             Preprocess              Preprocess.hs:(35,1)-(41,38)    396           1    0.0    0.0     0.0    0.0
  CAF                      Engine.CDCL             <entire-module>                 370           0    0.0    0.0     0.0    0.0
-  updateActivity          Engine.CDCL             Engine/CDCL.hs:(113,1)-(114,72) 477           1    0.0    0.0     0.0    0.0
+  updateActivity          Engine.CDCL             Engine/CDCL.hs:(113,1)-(114,84) 474           1    0.0    0.0     0.0    0.0
  CAF                      Main                    <entire-module>                 368           0    0.0    0.0     0.0    0.0
   main                    Main                    app/Main.hs:(17,1)-(31,47)      384           1    0.0    0.0     0.0    0.0
  CAF                      GHC.Conc.Signal         <entire-module>                 311           0    0.0    0.0     0.0    0.0
@@ -57,94 +55,92 @@ MAIN                      MAIN                    <built-in>                    
  CAF                      GHC.Weak.Finalize       <entire-module>                 248           0    0.0    0.0     0.0    0.0
  CAF                      Text.Printf             <entire-module>                 239           0    0.0    0.0     0.0    0.0
  main                     Main                    app/Main.hs:(17,1)-(31,47)      385           0    0.0    0.0   100.0  100.0
-  cdcl                    Engine.CDCL             Engine/CDCL.hs:(19,1)-(46,43)   391       11331    0.7    0.8    99.5   98.8
-   propagate              Engine.CDCL             Engine/CDCL.hs:(49,1)-(55,66)   393       99860    0.2    1.4    31.3   62.6
+  cdcl                    Engine.CDCL             Engine/CDCL.hs:(19,1)-(46,43)   391       11331    0.6    0.8    99.7   98.8
+   propagate              Engine.CDCL             Engine/CDCL.hs:(49,1)-(55,66)   393       99860    0.0    1.4    25.7   62.4
     queue                 Core.Types              Core/Types.hs:47:7-11           394       99860    0.0    0.0     0.0    0.0
     negateLit             Core.VarLit             Core/VarLit.hs:21:1-35          406       93273    0.0    0.2     0.0    0.2
-    processWatched        Core.Watched            Core/Watched.hs:(15,1)-(25,36)  412       93273    1.3    1.3    31.1   61.0
-     clauses              Core.Types              Core/Types.hs:37:7-13           418       93273    0.0    0.0     0.0    0.0
-     influencedClauses    Core.Watched            Core/Watched.hs:28:1-75         419       93273    3.0    8.7     3.0    8.7
-     litsToClauses        Core.Types              Core/Types.hs:40:7-19           413       93273    0.0    0.0     0.0    0.0
-     processInfluenced    Core.Watched            Core/Watched.hs:(31,1)-(38,90)  420       93273    1.5    4.2    26.0   49.7
-      checkClause         Core.Watched            Core/Watched.hs:(41,1)-(73,129) 421      356081   18.2   43.7    24.5   45.4
-       assignment         Core.Types              Core/Types.hs:45:7-16           428      477430    0.0    0.0     0.0    0.0
-       getVar             Core.VarLit             Core/VarLit.hs:9:1-18           424      477430    0.0    0.0     0.0    0.0
-       litToVar           Core.VarLit             Core/VarLit.hs:18:1-41          425      356081    0.0    0.0     0.0    0.0
-       watchedLits        Core.Types              Core/Types.hs:39:7-17           422      356081    0.0    0.0     0.0    0.0
-       findNewWatch       Core.Watched            Core/Watched.hs:(76,1)-(90,44)  430      277010    1.7    0.3     2.5    0.3
-        literalType       Core.VarLit             Core/VarLit.hs:(30,1)-(33,104)  433      277010    0.3    0.0     0.3    0.0
-         getVar           Core.VarLit             Core/VarLit.hs:9:1-18           435      277010    0.0    0.0     0.0    0.0
-         litToVar         Core.VarLit             Core/VarLit.hs:18:1-41          434      277010    0.0    0.0     0.0    0.0
-         litSign          Core.VarLit             Core/VarLit.hs:24:1-24          440      154904    0.0    0.0     0.0    0.0
-        /=                Core.Types              Core/Types.hs:8:33-34           432           0    0.5    0.0     0.5    0.0
-       litsToClauses      Core.Types              Core/Types.hs:40:7-19           438      150917    0.0    0.0     0.0    0.0
-       level              Core.Types              Core/Types.hs:46:7-11           455      121320    0.0    0.0     0.0    0.0
-       trail              Core.Types              Core/Types.hs:48:7-11           460      121320    0.0    0.0     0.0    0.0
-       trailAppend        Core.Trail              Core/Trail.hs:13:1-52           454      121320    0.0    0.0     0.0    0.0
-       enqueue            Core.Queue              Core/Queue.hs:8:1-24            443      117348    0.7    1.4     0.7    1.4
-       queue              Core.Types              Core/Types.hs:47:7-11           442      117348    0.0    0.0     0.0    0.0
-       ifLiteralTrue      Core.VarLit             Core/VarLit.hs:27:1-65          441       87742    0.0    0.0     0.0    0.0
-       litSign            Core.VarLit             Core/VarLit.hs:24:1-24          444       57643    0.2    0.0     0.2    0.0
-       compare            Core.Types              Core/Types.hs:8:37-39           439           0    3.0    0.0     3.0    0.0
-     dequeue              Core.Queue              Core/Queue.hs:(11,1)-(13,25)    437       88529    0.2    1.3     0.2    1.3
-     queue                Core.Types              Core/Types.hs:47:7-11           436       88529    0.0    0.0     0.0    0.0
-     compare              Core.Types              Core/Types.hs:8:37-39           417           0    0.7    0.0     0.7    0.0
-   analyze                Engine.CDCL             Engine/CDCL.hs:(70,1)-(83,35)   452       37252   24.7   15.8    54.0   16.8
-    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          466      430024    0.7    0.9     0.7    0.9
-    /=                    Core.Types              Core/Types.hs:7:33-34           465           0    0.7    0.0     0.7    0.0
-    ==                    Core.Types              Core/Types.hs:7:33-34           458           0   28.0    0.0    28.0    0.0
-   level                  Core.Types              Core/Types.hs:46:7-11           445       17918    0.0    0.0     0.0    0.0
+    processWatched        Core.Watched            Core/Watched.hs:(15,1)-(25,36)  409       93273    0.8    1.3    25.7   60.8
+     clauses              Core.Types              Core/Types.hs:37:7-13           415       93273    0.0    0.0     0.0    0.0
+     influencedClauses    Core.Watched            Core/Watched.hs:28:1-75         416       93273    2.8    8.7     2.8    8.7
+     litsToClauses        Core.Types              Core/Types.hs:40:7-19           410       93273    0.0    0.0     0.0    0.0
+     processInfluenced    Core.Watched            Core/Watched.hs:(31,1)-(38,90)  417       93273    1.1    4.2    21.4   49.6
+      checkClause         Core.Watched            Core/Watched.hs:(41,1)-(73,129) 418      356081   14.4   43.6    20.3   45.3
+       assignment         Core.Types              Core/Types.hs:45:7-16           425      477430    0.3    0.0     0.3    0.0
+       getVar             Core.VarLit             Core/VarLit.hs:9:1-18           421      477430    0.0    0.0     0.0    0.0
+       litToVar           Core.VarLit             Core/VarLit.hs:18:1-41          422      356081    0.0    0.0     0.0    0.0
+       watchedLits        Core.Types              Core/Types.hs:39:7-17           419      356081    0.0    0.0     0.0    0.0
+       findNewWatch       Core.Watched            Core/Watched.hs:(76,1)-(90,44)  427      277010    1.9    0.3     3.5    0.3
+        literalType       Core.VarLit             Core/VarLit.hs:(30,1)-(33,104)  430      277010    1.6    0.0     1.6    0.0
+         getVar           Core.VarLit             Core/VarLit.hs:9:1-18           432      277010    0.0    0.0     0.0    0.0
+         litToVar         Core.VarLit             Core/VarLit.hs:18:1-41          431      277010    0.0    0.0     0.0    0.0
+         litSign          Core.VarLit             Core/VarLit.hs:24:1-24          437      154904    0.0    0.0     0.0    0.0
+       litsToClauses      Core.Types              Core/Types.hs:40:7-19           435      150917    0.0    0.0     0.0    0.0
+       level              Core.Types              Core/Types.hs:46:7-11           452      121320    0.0    0.0     0.0    0.0
+       trail              Core.Types              Core/Types.hs:48:7-11           457      121320    0.0    0.0     0.0    0.0
+       trailAppend        Core.Trail              Core/Trail.hs:13:1-52           451      121320    0.0    0.0     0.0    0.0
+       enqueue            Core.Queue              Core/Queue.hs:8:1-24            440      117348    0.6    1.4     0.6    1.4
+       queue              Core.Types              Core/Types.hs:47:7-11           439      117348    0.0    0.0     0.0    0.0
+       ifLiteralTrue      Core.VarLit             Core/VarLit.hs:27:1-65          438       87742    0.0    0.0     0.0    0.0
+       litSign            Core.VarLit             Core/VarLit.hs:24:1-24          441       57643    0.0    0.0     0.0    0.0
+       compare            Core.Types              Core/Types.hs:8:37-39           436           0    1.4    0.0     1.4    0.0
+     dequeue              Core.Queue              Core/Queue.hs:(11,1)-(13,25)    434       88529    0.6    1.3     0.6    1.3
+     queue                Core.Types              Core/Types.hs:47:7-11           433       88529    0.0    0.0     0.0    0.0
+     compare              Core.Types              Core/Types.hs:8:37-39           414           0    0.2    0.0     0.2    0.0
+   analyze                Engine.CDCL             Engine/CDCL.hs:(70,1)-(83,35)   449       37252   23.5   15.8    61.1   16.7
+    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          463      430024    0.9    0.9     0.9    0.9
+    /=                    Core.Types              Core/Types.hs:7:33-34           462           0    0.8    0.0     0.8    0.0
+    ==                    Core.Types              Core/Types.hs:7:33-34           455           0   35.8    0.0    35.8    0.0
+   level                  Core.Types              Core/Types.hs:46:7-11           442       17918    0.0    0.0     0.0    0.0
    assignment             Core.Types              Core/Types.hs:45:7-16           402       17917    0.0    0.0     0.0    0.0
    hasConflict            Engine.CDCL             Engine/CDCL.hs:(58,1)-(59,59)   392       11331    0.0    0.0     0.0    0.0
    varActivity            Core.Types              Core/Types.hs:49:7-17           408       11327    0.0    0.0     0.0    0.0
    enqueue                Core.Queue              Core/Queue.hs:8:1-24            405        6587    0.0    0.0     0.0    0.0
-   getVar                 Core.VarLit             Core/VarLit.hs:9:1-18           429        6587    0.0    0.0     0.0    0.0
-   mostActiveVar          Decide.VSIDS            Decide/VSIDS.hs:(12,1)-(22,43)  403        6587    1.8    0.1     1.8    0.1
-    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           411      658700    0.0    0.0     0.0    0.0
+   getVar                 Core.VarLit             Core/VarLit.hs:9:1-18           426        6587    0.0    0.0     0.0    0.0
+   mostActiveVar          Decide.VSIDS            Decide/VSIDS.hs:(12,1)-(22,43)  403        6587    0.5    0.1     0.5    0.1
    queue                  Core.Types              Core/Types.hs:47:7-11           404        6587    0.0    0.0     0.0    0.0
-   trail                  Core.Types              Core/Types.hs:48:7-11           462        6587    0.0    0.0     0.0    0.0
-   trailAppend            Core.Trail              Core/Trail.hs:13:1-52           461        6587    0.0    0.0     0.0    0.0
+   trail                  Core.Types              Core/Types.hs:48:7-11           459        6587    0.0    0.0     0.0    0.0
+   trailAppend            Core.Trail              Core/Trail.hs:13:1-52           458        6587    0.0    0.0     0.0    0.0
    varCount               Core.Types              Core/Types.hs:41:7-14           401        6587    0.0    0.0     0.0    0.0
    varToLit               Core.VarLit             Core/VarLit.hs:15:1-41          407        6587    0.0    0.0     0.0    0.0
-   backjump               Engine.CDCL             Engine/CDCL.hs:(94,1)-(109,67)  446        4743    6.1    9.6     9.6   13.2
-    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          469     1728913    1.7    3.6     1.7    3.6
-    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           474       93064    0.0    0.0     0.0    0.0
-    clauses               Core.Types              Core/Types.hs:37:7-13           473        4743    0.0    0.0     0.0    0.0
-    assignment            Core.Types              Core/Types.hs:45:7-16           475        4732    0.0    0.0     0.0    0.0
-    enqueue               Core.Queue              Core/Queue.hs:8:1-24            449        4732    0.0    0.0     0.0    0.0
-    trail                 Core.Types              Core/Types.hs:48:7-11           476        4732    0.0    0.0     0.0    0.0
-    litSign               Core.VarLit             Core/VarLit.hs:24:1-24          482        4113    0.0    0.0     0.0    0.0
-    ==                    Core.Types              Core/Types.hs:7:33-34           468           0    1.8    0.0     1.8    0.0
-   clauses                Core.Types              Core/Types.hs:37:7-13           463        4743    0.0    0.0     0.0    0.0
-   conflictCount          Core.Types              Core/Types.hs:50:7-19           447        4743    0.0    0.0     0.0    0.0
-   extractInfo            Engine.CDCL             Engine/CDCL.hs:(62,1)-(67,55)   450        4743    0.8    2.7     0.8    2.7
-    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          459       14229    0.0    0.0     0.0    0.0
-    clauses               Core.Types              Core/Types.hs:37:7-13           451        4743    0.0    0.0     0.0    0.0
-    level                 Core.Types              Core/Types.hs:46:7-11           456        4743    0.0    0.0     0.0    0.0
-    trail                 Core.Types              Core/Types.hs:48:7-11           453        4743    0.0    0.0     0.0    0.0
-   learn                  Engine.CDCL             Engine/CDCL.hs:(86,1)-(91,44)   467        4743    0.8    0.6     0.8    0.6
-    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           470       40232    0.0    0.0     0.0    0.0
-    varToLit              Core.VarLit             Core/VarLit.hs:15:1-41          471       40232    0.0    0.0     0.0    0.0
-    negateLit             Core.VarLit             Core/VarLit.hs:21:1-35          472       24219    0.0    0.0     0.0    0.0
-   restartThreshold       Core.Types              Core/Types.hs:51:7-22           448        4743    0.0    0.0     0.0    0.0
-   restart                Core.Restart            Core/Restart.hs:(12,1)-(22,39)  483          11    0.0    0.1     0.0    0.2
-    clauses               Core.Types              Core/Types.hs:37:7-13           485          11    0.0    0.0     0.0    0.0
-    enqueueUnitClauses    Preprocess              Preprocess.hs:54:1-80           484          11    0.0    0.1     0.0    0.1
-    restartThreshold      Core.Types              Core/Types.hs:51:7-22           486          11    0.0    0.0     0.0    0.0
-    assignmentConstructor Preprocess              Preprocess.hs:44:1-115          487           1    0.0    0.0     0.0    0.0
-     getVar               Core.VarLit             Core/VarLit.hs:9:1-18           488           1    0.0    0.0     0.0    0.0
-     litSign              Core.VarLit             Core/VarLit.hs:24:1-24          490           1    0.0    0.0     0.0    0.0
-     litToVar             Core.VarLit             Core/VarLit.hs:18:1-41          489           1    0.0    0.0     0.0    0.0
-    trailConstructor      Preprocess              Preprocess.hs:47:1-73           491           1    0.0    0.0     0.0    0.0
-     litToVar             Core.VarLit             Core/VarLit.hs:18:1-41          492           1    0.0    0.0     0.0    0.0
-   updateActivity         Engine.CDCL             Engine/CDCL.hs:(113,1)-(114,72) 478           0    0.3    1.8     0.5    1.9
-    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          479       40211    0.0    0.1     0.0    0.1
-    compare               Core.Types              Core/Types.hs:7:37-39           481           0    0.2    0.0     0.2    0.0
-  parse                   Parser                  Parser.hs:(7,1)-(32,54)         389           1    0.3    1.0     0.3    1.0
-  preprocess              Preprocess              Preprocess.hs:(12,1)-(32,67)    390           1    0.2    0.1     0.2    0.2
+   backjump               Engine.CDCL             Engine/CDCL.hs:(94,1)-(109,67)  443        4743    6.4    9.6     9.9   13.2
+    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          466     1728913    1.6    3.6     1.6    3.6
+    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           471       93064    0.0    0.0     0.0    0.0
+    clauses               Core.Types              Core/Types.hs:37:7-13           470        4743    0.0    0.0     0.0    0.0
+    assignment            Core.Types              Core/Types.hs:45:7-16           472        4732    0.0    0.0     0.0    0.0
+    enqueue               Core.Queue              Core/Queue.hs:8:1-24            446        4732    0.2    0.0     0.2    0.0
+    trail                 Core.Types              Core/Types.hs:48:7-11           473        4732    0.0    0.0     0.0    0.0
+    litSign               Core.VarLit             Core/VarLit.hs:24:1-24          478        4113    0.0    0.0     0.0    0.0
+    ==                    Core.Types              Core/Types.hs:7:33-34           465           0    1.7    0.0     1.7    0.0
+   clauses                Core.Types              Core/Types.hs:37:7-13           460        4743    0.0    0.0     0.0    0.0
+   conflictCount          Core.Types              Core/Types.hs:50:7-19           444        4743    0.0    0.0     0.0    0.0
+   extractInfo            Engine.CDCL             Engine/CDCL.hs:(62,1)-(67,55)   447        4743    0.3    2.7     0.3    2.7
+    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          456       14229    0.0    0.0     0.0    0.0
+    clauses               Core.Types              Core/Types.hs:37:7-13           448        4743    0.0    0.0     0.0    0.0
+    level                 Core.Types              Core/Types.hs:46:7-11           453        4743    0.0    0.0     0.0    0.0
+    trail                 Core.Types              Core/Types.hs:48:7-11           450        4743    0.0    0.0     0.0    0.0
+   learn                  Engine.CDCL             Engine/CDCL.hs:(86,1)-(91,44)   464        4743    0.8    0.6     0.8    0.6
+    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           467       40232    0.0    0.0     0.0    0.0
+    varToLit              Core.VarLit             Core/VarLit.hs:15:1-41          468       40232    0.0    0.0     0.0    0.0
+    negateLit             Core.VarLit             Core/VarLit.hs:21:1-35          469       24219    0.0    0.0     0.0    0.0
+   restartThreshold       Core.Types              Core/Types.hs:51:7-22           445        4743    0.0    0.0     0.0    0.0
+   restart                Core.Restart            Core/Restart.hs:(12,1)-(22,39)  479          11    0.0    0.1     0.0    0.2
+    clauses               Core.Types              Core/Types.hs:37:7-13           481          11    0.0    0.0     0.0    0.0
+    enqueueUnitClauses    Preprocess              Preprocess.hs:54:1-80           480          11    0.0    0.1     0.0    0.1
+    restartThreshold      Core.Types              Core/Types.hs:51:7-22           482          11    0.0    0.0     0.0    0.0
+    assignmentConstructor Preprocess              Preprocess.hs:44:1-115          483           1    0.0    0.0     0.0    0.0
+     getVar               Core.VarLit             Core/VarLit.hs:9:1-18           484           1    0.0    0.0     0.0    0.0
+     litSign              Core.VarLit             Core/VarLit.hs:24:1-24          486           1    0.0    0.0     0.0    0.0
+     litToVar             Core.VarLit             Core/VarLit.hs:18:1-41          485           1    0.0    0.0     0.0    0.0
+    trailConstructor      Preprocess              Preprocess.hs:47:1-73           487           1    0.0    0.0     0.0    0.0
+     litToVar             Core.VarLit             Core/VarLit.hs:18:1-41          488           1    0.0    0.0     0.0    0.0
+   updateActivity         Engine.CDCL             Engine/CDCL.hs:(113,1)-(114,84) 475           0    0.5    2.0     0.8    2.1
+    getVar                Core.VarLit             Core/VarLit.hs:9:1-18           476       40211    0.0    0.0     0.0    0.0
+    litToVar              Core.VarLit             Core/VarLit.hs:18:1-41          477       40211    0.3    0.1     0.3    0.1
+  parse                   Parser                  Parser.hs:(7,1)-(32,54)         389           1    0.0    1.0     0.0    1.0
+  preprocess              Preprocess              Preprocess.hs:(12,1)-(32,67)    390           1    0.3    0.1     0.3    0.2
    listToClause           Preprocess              Preprocess.hs:50:1-37           398         430    0.0    0.0     0.0    0.0
-   watchedBy              Preprocess              Preprocess.hs:(61,1)-(62,56)    414         430    0.0    0.0     0.0    0.0
-   watching               Preprocess              Preprocess.hs:(57,1)-(58,44)    423         430    0.0    0.0     0.0    0.0
+   watchedBy              Preprocess              Preprocess.hs:(61,1)-(62,56)    411         430    0.0    0.0     0.0    0.0
+   watching               Preprocess              Preprocess.hs:(57,1)-(58,44)    420         430    0.0    0.0     0.0    0.0
    enqueueUnitClauses     Preprocess              Preprocess.hs:54:1-80           395           1    0.0    0.0     0.0    0.0
    adjustIndex            Preprocess              Preprocess.hs:(35,1)-(41,38)    397           0    0.0    0.0     0.0    0.0
   show                    Core.Types              Core/Types.hs:25:68-71          387           0    0.0    0.0     0.0    0.0

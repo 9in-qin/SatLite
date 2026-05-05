@@ -13,10 +13,10 @@ mostActiveVar totalVar asgmt varAC
     | length asgmt == totalVar =
         Nothing
     | otherwise =
-        Just $ fst nextVar--(head notAssigned)
+        Just $ Var (fst nextVar)--(head notAssigned)
         where
-            nextVar = Map.foldlWithKey' mostActive (Var 0, 0.0) varAC
+            nextVar = IntMap.foldlWithKey' mostActive (0, 0.0) varAC
             mostActive (var, score) var' score' =
-                case IntMap.lookup (getVar var') asgmt of
+                case IntMap.lookup var' asgmt of
                     Nothing -> if score' > score then (var', score') else (var, score)
                     _       -> (var, score)

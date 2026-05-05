@@ -20,7 +20,7 @@ type TrailElement  = (Var, Bool, Level, Reason)
 type Level         = Int
 type LBD           = Int
 
-type VarActivity   = Map.Map Var Double
+type VarActivity   = IntMap.IntMap Double
 
 data Result        = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
 data Result'       = UNSAT' | SAT' Assignment deriving (Show)
