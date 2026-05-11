@@ -7,7 +7,6 @@ import System.CPUTime
 import Text.Printf
 
 import Parser
-import Core.Types
 import Preprocess
 import Engine.CDCL as CDCL
 import Engine.DPLL as DPLL

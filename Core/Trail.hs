@@ -5,6 +5,18 @@ import qualified Data.IntMap as IntMap
 import Core.Var
 import Core.Clause
 
+-- data TrailStore = TrailStore
+--     { trailLevels :: [TrailLevels]
+--     , varInfo     :: IntMap.IntMap Bool
+--     } deriving (Show)
+
+-- data TrailLevels = TrailLevels
+--     { currentlevel :: Level
+--     , lvTrail      :: [Var]
+--     } deriving (Show)
+
+-- type TrailEntry = Var
+
 type Level         = Int
 type Trail         = [TrailElement]
 type TrailElement  = (Var, Bool, Level, Reason)

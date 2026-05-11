@@ -9,6 +9,7 @@ import Core.Var
 import Core.ClauseDB
 import Core.SolverState
 import Core.Assignment
+import Decide.VarActivity
 
 mostActiveVar :: VarCount -> Assignment -> VarActivity -> Maybe Var
 mostActiveVar totalVar asgmt varAC

@@ -6,7 +6,6 @@ import qualified Data.IntSet as IntSet
 import qualified Data.Sequence as Seq
 import Data.List
 
-import Core.Types
 import Core.Var
 import Core.Lit
 import Core.Clause
@@ -19,6 +18,7 @@ import Core.SolverState
 import Decide.Arbitrary
 import Decide.VSIDS
 import Core.Assignment
+import Decide.VarActivity
 
 data Result        = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
 

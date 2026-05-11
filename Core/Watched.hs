@@ -11,7 +11,6 @@ import Core.Clause
 import Core.ClauseDB
 import Core.SolverState
 import Core.Queue
-import Core.Types
 import Core.Assignment
 
 import Data.List (foldl')

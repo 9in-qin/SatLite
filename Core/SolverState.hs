@@ -8,8 +8,7 @@ import Core.Var
 import Core.Lit
 import Core.Queue
 import Core.Assignment
-
-type VarActivity   = IntMap.IntMap Double
+import Decide.VarActivity
 
 data SolverState = SolverState
     { assignment :: Assignment

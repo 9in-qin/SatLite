@@ -74,12 +74,12 @@ executable haskell-sat-solver
         Core.Restart
         Core.SolverState
         Core.Trail
-        Core.Types
         Core.Var
         Core.Watched
         Core.WatchedLits
 
         Decide.Arbitrary
+        Decide.VarActivity
         Decide.VSIDS
 
         Engine.CDCL

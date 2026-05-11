@@ -5,7 +5,6 @@ import System.Environment (getArgs)
 import System.IO
 
 import Parser
-import Core.Types
 import Preprocess
 import Engine.DPLL
 import Engine.CDCL

@@ -5,7 +5,6 @@ import Data.Maybe
 import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
 
-import Core.Types
 import Core.Lit
 import Decide.Arbitrary
 
