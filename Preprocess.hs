@@ -5,8 +5,13 @@ import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Data.List
 
-import Core.Types
-import Core.VarLit
+import Core.Var
+import Core.Lit
+import Core.Trail
+import Core.Clause
+import Core.ClauseDB
+import Core.SolverState
+import Core.Queue
 
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
 preprocess (cls, (numVars, numClauses)) =

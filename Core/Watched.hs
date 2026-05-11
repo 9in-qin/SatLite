@@ -4,12 +4,20 @@ import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Data.IntSet as IntSet
 
-import Core.Types
-import Core.VarLit
-import Core.Queue
+import Core.Var
+import Core.Lit
 import Core.Trail
+import Core.Clause
+import Core.ClauseDB
+import Core.SolverState
+import Core.Queue
+import Core.Types
+import Core.Assignment
+
 import Data.List (foldl')
 import qualified Data.IntMap as IntMap
+
+data IfConflict    = NoConflict | DoesConflict CID deriving (Show)
 
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =

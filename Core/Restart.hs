@@ -5,7 +5,8 @@ import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Data.List
 
-import Core.Types
+import Core.ClauseDB
+import Core.SolverState
 import Preprocess
 
 restart :: ClauseDB -> SolverState -> SolverState

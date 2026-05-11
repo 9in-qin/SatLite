@@ -7,13 +7,20 @@ import qualified Data.Sequence as Seq
 import Data.List
 
 import Core.Types
-import Core.VarLit
+import Core.Var
+import Core.Lit
+import Core.Clause
 import Core.Queue
 import Core.Trail
 import Core.Watched
 import Core.Restart
+import Core.ClauseDB
+import Core.SolverState
 import Decide.Arbitrary
 import Decide.VSIDS
+import Core.Assignment
+
+data Result        = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
 
 cdcl :: ClauseDB -> SolverState -> Result
 cdcl db ss =
@@ -68,12 +75,15 @@ extractInfo (db, ss, cid) = let conflictClsToVar  = map litToVar $ clauses db In
 
 analyze :: ([Var], [Var], [TrailElement]) -> Clauses -> ([Var], Var)
 analyze (vars, currentLevelVars, tr) cls
-    | length currentLevelVarsLeft == 1 = (vars, head currentLevelVarsLeft)
+    | exactlyOne currentLevelVarsLeft = (vars, head currentLevelVarsLeft)
     | otherwise = analyze (newVars, currentLevelVars, tr) cls
         where
             currentLevelVarsLeft = vars `intersect` currentLevelVars
             newVars = nub $ concatMap replaceVar vars
 
+            exactlyOne [x] = True
+            exactlyOne _   = False
+            
             replaceVar :: Var -> [Var]
             replaceVar var
                 | var `elem` currentLevelVars =

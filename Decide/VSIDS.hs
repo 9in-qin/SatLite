@@ -5,8 +5,10 @@ import qualified Data.IntMap as IntMap
 import qualified Data.Set as Set
 import Data.List
 
-import Core.Types
-import Core.VarLit
+import Core.Var
+import Core.ClauseDB
+import Core.SolverState
+import Core.Assignment
 
 mostActiveVar :: VarCount -> Assignment -> VarActivity -> Maybe Var
 mostActiveVar totalVar asgmt varAC

@@ -1,12 +1,13 @@
-module Core.VarLit where
+module Core.Lit where
 
-import Core.Types
+import Core.Var
+
 import Data.Bits
 import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
 
-getVar :: Var -> Int
-getVar (Var i) = i
+newtype Lit = Lit Int deriving (Eq, Ord, Show)
+data LitType       = LitTrue | LitFalse | LitUnassigned deriving (Show)
 
 getLit :: Lit -> Int
 getLit (Lit i) = i
@@ -25,9 +26,3 @@ litSign (Lit i) = even i
 
 ifLiteralTrue :: Lit -> Bool -> Bool
 ifLiteralTrue (Lit i) val = (even i && val) || (odd i && not val)
-
-literalType :: Assignment -> Lit -> LitType
-literalType asgmt lit =
-    case IntMap.lookup (getVar $ litToVar lit) asgmt of
-        Nothing  -> LitUnassigned
-        Just val -> if (litSign lit && val) || (not (litSign lit) && not val) then LitTrue else LitFalse

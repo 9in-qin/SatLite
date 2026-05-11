@@ -64,14 +64,20 @@ executable haskell-sat-solver
     default-language: GHC2021
 
     other-modules:
-        Core.Clauses
+        Core.Assignment
+        Core.Clause
+        Core.ClauseDB
         Core.LBD
+        Core.Lit
+        Core.LitsToClauses
         Core.Queue
         Core.Restart
+        Core.SolverState
         Core.Trail
         Core.Types
-        Core.VarLit
+        Core.Var
         Core.Watched
+        Core.WatchedLits
 
         Decide.Arbitrary
         Decide.VSIDS
