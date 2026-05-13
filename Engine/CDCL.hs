@@ -30,12 +30,11 @@ cdcl db ss =
             0  -> UNSAT
             lv -> let (conflictClsToVar, currentLevelVars, rsns) = extractInfo (db', ss', cid)
                       (learnedClause, firstUIP) = analyze (conflictClsToVar, currentLevelVars, rsns) currentLevelVars (clauses db')
-                      --learnedClause = learn analyzed1 (assignment ss')
                       learnedClause' = IntMap.elems learnedClause
                       (newDB, newSS) = backjump db' ss' learnedClause' firstUIP lv
-
-                      newSS' = newSS {varActivity = refreshActivity,--updateActivity (varActivity newSS) learnedClause,
-                                      conflictCount = newConflictCount}
+                      newSS' = newSS { varActivity = refreshActivity
+                                     , conflictCount = newConflictCount
+                                     }
                       newConflictCount = conflictCount newSS + 1
                       refreshActivity = if newConflictCount `mod` 100 /= 0
                                         then updateActivity (varActivity newSS) learnedClause'
@@ -43,14 +42,11 @@ cdcl db ss =
 
                       threshold = restartThreshold newSS
                       ifRestart = if newConflictCount == threshold then restart newDB newSS' else newSS'
-                      in cdcl newDB ifRestart--{restartThreshold = 2 * restartThreshold ifRestart}--{varActivity = refreshActivity}
-                  --in cdcl newDB newSS'
-        --(db', ss', Nothing)  -> case unAssigned (varCount db') (assignment ss') of -- readers: what unAssigned?
+                      in cdcl newDB ifRestart
         (db', ss', Nothing)  -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of -- readers: what unAssigned?
             Nothing      -> SAT (db', ss')
             Just nextVar -> let ss0 = ss' { level = level ss' + 1, assignment = IntMap.insert (getVar nextVar) True $ assignment ss'
                                           , queue = enqueue (varToLit nextVar) $ queue ss'
-                                        --   trail = trailAppend (trail ss') nextVar True (level ss' + 1) Decided}
                                           , trail = trailPush (newLevel $ trail ss') (nextVar, Decided)
                                           }
                             in cdcl db' ss0
@@ -69,15 +65,8 @@ hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
 hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
 
 extractInfo :: (ClauseDB, SolverState, CID) -> (ResolutionClause, TrailElements, Reasons)
-extractInfo (db, ss, cid) = let --conflictClsToVar  = map litToVar $ clauses db IntMap.! cid
-                                --currentLevelTrail = [(var, val, lv, r) | (var, val, lv, r) <- trail ss, lv == currentLevel]
-                                conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid) -- need to make it more readable
-                                
-                                -- currentLvTrail   = currentLevelTrail tr
-                                -- trailEles        = trailElements currentLvTrail
+extractInfo (db, ss, cid) = let conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid) -- need to make it more readable
                                 trailEles = currentLevelTrail tr
-
-                                --currentLevelVars  = map (\(var, _, _, _) -> var) currentLevelTrail
                             in (conflictClsToVar, trailEles, reasons tr)
                             where
                                 --currentLevel = level ss
@@ -125,31 +114,6 @@ resolution resCl var cl = foldl' insertLit resClWithoutVar clWithoutVar
         insertLit :: ResolutionClause -> Lit -> ResolutionClause
         insertLit resCl' lit' = IntMap.insert (getVar $ litToVar lit') lit' resCl'
 
-    -- | exactlyOne currentLevelVarsLeft = (vars, head currentLevelVarsLeft)
-    -- | otherwise = analyze (newVars, currentLevelVars, tr) cls
-    --     where
-    --         currentLevelVarsLeft = vars `intersect` currentLevelVars
-    --         newVars = nub $ concatMap replaceVar vars
-
-    --         exactlyOne [x] = True
-    --         exactlyOne _   = False
-
-    --         replaceVar :: Var -> [Var]
-    --         replaceVar var
-    --             | var `elem` currentLevelVars =
-    --                 case [r | (v, _, _, r) <- tr, v == var] of
-    --                     [Decided]        -> [var]
-    --                     [Propagated cid] -> filter (/= var) $ map litToVar $ cls IntMap.! cid
-    --             | otherwise = [var]
-
--- learn :: [Var] -> Assignment -> [Lit]
--- learn vars asgmt = map step vars
---     where
---         step :: Var -> Lit
---         step var
---             | asgmt IntMap.! getVar var = negateLit $ varToLit var -- learn the opposite
---             | otherwise       = varToLit var
-
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
     (db{clauses = updatedClauses},
@@ -158,13 +122,10 @@ backjump db ss learnedCl firstUIP currentLevel =
         updatedClauses = IntMap.insert newCID learnedCl cls
         backjumpLevel = if length learnedCl == 1 then 0
                         else foldl' levelChecker 0 learnedCl -- start with 0?
-                            --maximum [level | (var, _, level, _) <- tr, var `elem` map litToVar learnedCl, level < currentLevel]
         updatedQueue = enqueue theLiteral Seq.empty
-        --updatedTrail = (firstUIP, theValue, backjumpLevel, Propagated newCID) : filter (\(_, _, lv, _) -> lv <= backjumpLevel) tr
 
         (poppedTrail, unpoppedVars) = trailPopToLevel tr backjumpLevel
         updatedTrail = trailPush poppedTrail (firstUIP, Propagated newCID)
-        
         
         updatedAssignment = IntMap.insert (getVar firstUIP) theValue (IntMap.restrictKeys (assignment ss) (IntSet.fromList keptVars))
         newCID = length cls
@@ -173,16 +134,7 @@ backjump db ss learnedCl firstUIP currentLevel =
         levelInfo = levels tr
         theLiteral = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
         theValue = litSign theLiteral
-        --keptVars = map (\(var, _, _, _) -> getVar var) updatedTrail
         keptVars = map getVar unpoppedVars
 
         levelChecker :: Level -> Lit -> Level
         levelChecker lv lit = let litLv = levelInfo IntMap.! getVar (litToVar lit) in if litLv > lv && litLv /= currentLevel then litLv else lv
-
---VSIDS related functions
--- updateActivity :: VarActivity -> Clause -> VarActivity
--- updateActivity = --foldl' updateCertainVar
---     foldl' (\ac (Lit i) -> IntMap.insertWith (+) (getVar $ litToVar (Lit i)) 1.0 ac)
-    -- where
-    --     updateCertainVar :: Map.Map Var Double -> Lit -> Map.Map Var Double
-    --     updateCertainVar ac (Lit i) = Map.insertWith (+) (Var i) 1.0 ac

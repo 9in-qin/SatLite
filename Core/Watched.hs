@@ -95,20 +95,3 @@ findNewWatch asgmt cl lit0 lit1    =
             case literalType asgmt lit of
                 LitFalse -> (potentialLit, litType)
                 tOrU     -> (Just lit, tOrU)
-
--- findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
--- findNewWatch asgmt [_] lit0 lit1   = Nothing -- should be checked ealier instead of in this function, revise later
--- findNewWatch asgmt [_,_] lit0 lit1 = Nothing
--- findNewWatch asgmt cl lit0 lit1    =
---     case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
---         (_, LitFalse)  -> Nothing
---         (resultLit, _) -> resultLit
---     where
---         newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
-
---         trueOrUnassigned :: (Maybe Lit, LitType) -> Lit -> (Maybe Lit, LitType)
---         trueOrUnassigned (potentialLit, LitTrue) _   = (potentialLit, LitTrue)
---         trueOrUnassigned (potentialLit, litType) lit =
---             case literalType asgmt lit of
---                 LitFalse -> (potentialLit, litType)
---                 tOrU     -> (Just lit, tOrU)
