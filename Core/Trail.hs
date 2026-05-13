@@ -70,36 +70,3 @@ trailPopToLevel tr targetLv =
         poppedVars = concat poppedTrails
         unpoppedVars = concat remainingTrails
         deleteVar intMap var = IntMap.delete (getVar var) intMap
-
--- data LvBasedTrail = LvBasedTrail
---     { trailLv       :: Level
---     , trailElements :: TrailElements
---     } deriving (Show)
-
--- trailPush :: Trail -> (Var, Reason) -> Trail
--- trailPush tr (var, rsn) =
---     tr { lvBasedTrails = updatedLvBasedTrails
---        , reasons       = IntMap.insert (getVar var) rsn (reasons tr)
---        , levels        = IntMap.insert (getVar var) lv (levels tr)
---        }
---     where
---         (updatedLvBasedTrails, lv) =
---             case lvBasedTrails tr of
---                 []                       -> ( [LvBasedTrail {trailLv = 0, trailElements = [var]}]
---                                             , 0)
---                 currentLvTr : olderLvTrs -> ( currentLvTr {trailElements = var : trailElements currentLvTr} : olderLvTrs
---                                             , trailLv currentLvTr)
-
--- newLevel :: Trail -> Trail
--- newLevel tr = tr {lvBasedTrails = LvBasedTrail {trailLv = currentLevel + 1, trailElements = []} : lvBasedTrails tr}
---     where
---         currentLevel = trailLv $ currentLevelTrail tr
-
--- currentLevelTrail :: Trail -> LvBasedTrail
--- currentLevelTrail tr =
---     case lvBasedTrails tr of
---         []           -> LvBasedTrail {trailLv = 0, trailElements = []}
---         newestTr : _ -> newestTr
-
--- trailPopToLevel :: Trail -> Level -> (Trail, [Var])
--- trailPopToLevel tr lv = (tr, [Var 1])
