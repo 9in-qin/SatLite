@@ -1,33 +1,105 @@
 module Core.Trail where
 
 import qualified Data.IntMap as IntMap
+import Data.Maybe
+import Data.List
 
 import Core.Var
 import Core.Clause
 
--- data TrailStore = TrailStore
---     { trailLevels :: [TrailLevels]
---     , varInfo     :: IntMap.IntMap Bool
---     } deriving (Show)
-
--- data TrailLevels = TrailLevels
---     { currentlevel :: Level
---     , lvTrail      :: [Var]
---     } deriving (Show)
-
--- type TrailEntry = Var
-
 type Level         = Int
-type Trail         = [TrailElement]
-type TrailElement  = (Var, Bool, Level, Reason)
+type Levels        = IntMap.IntMap Level
 data Reason        = Decided | Propagated CID deriving (Eq, Ord, Show)
+type Reasons       = IntMap.IntMap Reason
+type TrailElements = [Var]
 
-trailPush :: TrailElement -> Trail -> Trail
-trailPush trlEle tr = trlEle:tr
+data Trail = Trail
+    { currentLevel  :: Level
+    , lvBasedTrails :: [LvBasedTrail]
+    , reasons       :: Reasons
+    , levels        :: Levels
+    } deriving (Show)
 
-trailPop :: Trail -> Trail
-trailPop []            = []
-trailPop (trlEle:rest) = rest
+emptyTrail :: Trail
+emptyTrail =
+    Trail
+    { currentLevel  = 0
+    , lvBasedTrails = [[]]
+    , reasons       = IntMap.empty
+    , levels        = IntMap.empty
+    }
 
-trailAppend :: Trail -> Var -> Bool -> Level -> Reason -> Trail
-trailAppend tr var val lv r = (var, val, lv, r) : tr
+type LvBasedTrail = [Var]
+
+newLevel :: Trail -> Trail
+newLevel tr =
+    tr { currentLevel  = currentLevel tr + 1
+       , lvBasedTrails = [] : lvBasedTrails tr
+       }
+
+trailPush :: Trail -> (Var, Reason) -> Trail
+trailPush tr (var, rsn) = -- may need to check if there is a repetitive push
+    tr { lvBasedTrails = updatedLvBasedTrails
+       , reasons       = IntMap.insert varKey rsn (reasons tr)
+       , levels        = IntMap.insert varKey (currentLevel tr) (levels tr)
+       }
+    where
+        varKey = getVar var
+        updatedLvBasedTrails =
+            case lvBasedTrails tr of
+                currentTrail : lowerLvTrails -> (var : currentTrail) : lowerLvTrails
+                []                           -> error "Should not."
+
+currentLevelTrail :: Trail -> LvBasedTrail
+currentLevelTrail tr =
+    case lvBasedTrails tr of
+        currentTrail : _ -> currentTrail
+        []               -> error "Should not."
+
+trailPopToLevel :: Trail -> Level -> (Trail, [Var])
+trailPopToLevel tr targetLv =
+    ( tr { currentLevel = targetLv
+         , lvBasedTrails = remainingTrails
+         , reasons       = foldl' deleteVar (reasons tr) poppedVars
+         , levels        = foldl' deleteVar (levels tr) poppedVars
+         }
+    , unpoppedVars)
+    where
+        popSplit = currentLevel tr - targetLv
+        (poppedTrails, remainingTrails) = splitAt popSplit (lvBasedTrails tr)
+        poppedVars = concat poppedTrails
+        unpoppedVars = concat remainingTrails
+        deleteVar intMap var = IntMap.delete (getVar var) intMap
+
+-- data LvBasedTrail = LvBasedTrail
+--     { trailLv       :: Level
+--     , trailElements :: TrailElements
+--     } deriving (Show)
+
+-- trailPush :: Trail -> (Var, Reason) -> Trail
+-- trailPush tr (var, rsn) =
+--     tr { lvBasedTrails = updatedLvBasedTrails
+--        , reasons       = IntMap.insert (getVar var) rsn (reasons tr)
+--        , levels        = IntMap.insert (getVar var) lv (levels tr)
+--        }
+--     where
+--         (updatedLvBasedTrails, lv) =
+--             case lvBasedTrails tr of
+--                 []                       -> ( [LvBasedTrail {trailLv = 0, trailElements = [var]}]
+--                                             , 0)
+--                 currentLvTr : olderLvTrs -> ( currentLvTr {trailElements = var : trailElements currentLvTr} : olderLvTrs
+--                                             , trailLv currentLvTr)
+
+-- newLevel :: Trail -> Trail
+-- newLevel tr = tr {lvBasedTrails = LvBasedTrail {trailLv = currentLevel + 1, trailElements = []} : lvBasedTrails tr}
+--     where
+--         currentLevel = trailLv $ currentLevelTrail tr
+
+-- currentLevelTrail :: Trail -> LvBasedTrail
+-- currentLevelTrail tr =
+--     case lvBasedTrails tr of
+--         []           -> LvBasedTrail {trailLv = 0, trailElements = []}
+--         newestTr : _ -> newestTr
+
+-- trailPopToLevel :: Trail -> Level -> (Trail, [Var])
+-- trailPopToLevel tr lv = (tr, [Var 1])

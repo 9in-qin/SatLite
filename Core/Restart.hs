@@ -8,16 +8,22 @@ import Data.List
 import Core.ClauseDB
 import Core.SolverState
 import Preprocess
+import Core.Trail
+import Core.Lit
 
 restart :: ClauseDB -> SolverState -> SolverState
 restart db ss =
     ss {assignment = foldl' assignmentConstructor IntMap.empty unitCls,
         level = 0,
         queue = enqueueUnitClauses cls Seq.empty,
-        trail = foldl' trailConstructor [] unitCls,
+        trail      = foldl' trailPush emptyTrail varAndRsn,
         conflictCount = 0,
         restartThreshold = floor (fromIntegral threshold * 1.25)}
     where
         unitCls = [ l | [l] <- IntMap.elems cls ]
+        unitLits  = [ (cid, l) | (cid, [l]) <- IntMap.toList cls ]
+        unitLits' = map snd unitLits
+        unitVars  = map (fmap litToVar) unitLits
+        varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars
         cls     = clauses db
         threshold = restartThreshold ss

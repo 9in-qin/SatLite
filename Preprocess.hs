@@ -23,17 +23,20 @@ preprocess (cls, (numVars, numClauses)) =
     , varCount      = numVars
     },
     SolverState
-    { assignment = foldl' assignmentConstructor IntMap.empty unitCls
+    { assignment = foldl' assignmentConstructor IntMap.empty unitLits'
     , level      = 0
     , queue      = enqueueUnitClauses dbClauses Seq.empty
-    , trail      = foldl' trailConstructor [] unitCls
+    , trail      = foldl' trailPush emptyTrail varAndRsn
     , varActivity =  IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]
     , conflictCount = 0
     , restartThreshold = 100
     })
     where
         dbClauses = IntMap.fromList $ zipWith listToClause [0..] cls'
-        unitCls   = [ l | [l] <- IntMap.elems dbClauses ]
+        unitLits  = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
+        unitLits' = map snd unitLits
+        unitVars  = map (fmap litToVar) unitLits
+        varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars
         cls'      = nub $ map (map (\x -> x - 2)) $ adjustIndex cls
 
 adjustIndex :: [[Int]] -> [[Int]]
@@ -48,8 +51,8 @@ adjustIndex = map step
 assignmentConstructor :: IntMap.IntMap Bool -> Lit -> IntMap.IntMap Bool
 assignmentConstructor currentAssignment lit = IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
 
-trailConstructor :: Trail -> Lit -> Trail
-trailConstructor tr lit = (litToVar lit, litSign lit, 0, Propagated 0):tr
+-- trailConstructor :: Trail -> Lit -> Trail
+-- trailConstructor tr lit = (litToVar lit, litSign lit, 0, Propagated 0):tr
 
 listToClause :: CID -> [Int] -> (CID, [Lit])
 listToClause cid l = (cid, map Lit l)
@@ -65,7 +68,3 @@ watching cid (x:y:_) = (cid, (Lit x, Lit y))
 watchedBy :: CID -> [Int] -> [(Int, [CID])]
 watchedBy cid [x]     = [(x, [cid])]
 watchedBy cid (x:y:_) = [(x, [cid]), (y, [cid])]
-
--- watchedBy :: CID -> [Int] -> [(Lit, [CID])]
--- watchedBy cid [x]     = [(Lit x, [cid])]
--- watchedBy cid (x:y:_) = [(Lit x, [cid]), (Lit y, [cid])]

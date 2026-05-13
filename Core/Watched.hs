@@ -56,7 +56,7 @@ checkClause lit cid cl db ss =
                     Nothing   -> let q'               = enqueue theOtherWatch q
                                      otherWatchNewVal = litSign theOtherWatch
                                      assignment'      = IntMap.insert (getVar theOtherWatchVar) otherWatchNewVal (assignment ss)
-                                     trail'           = trailAppend (trail ss) theOtherWatchVar otherWatchNewVal l (Propagated cid)
+                                     trail'           = trailPush (trail ss) (theOtherWatchVar, Propagated cid)
                                  in (lit, db, ss {assignment = assignment', queue = q', trail = trail'}, NoConflict)
                     Just lit0 -> helper lit0
     where

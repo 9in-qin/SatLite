@@ -9,5 +9,5 @@ import Data.List
 
 type LBD           = Int
 
-clauseLBD :: Clause -> Trail -> LBD
-clauseLBD cl tr = length $ nub [lv | (Var i, bool, lv, reason) <- tr, Lit i `elem` cl]
+-- clauseLBD :: Clause -> Trail -> LBD
+-- clauseLBD cl tr = length $ nub [lv | (Var i, bool, lv, reason) <- tr, Lit i `elem` cl]
