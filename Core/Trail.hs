@@ -1,7 +1,6 @@
 module Core.Trail where
 
 import qualified Data.IntMap as IntMap
-import Data.Maybe
 import Data.List
 
 import Core.Var
