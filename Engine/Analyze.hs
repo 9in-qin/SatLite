@@ -10,9 +10,20 @@ import Core.Var
 import Core.Lit
 import Core.Clause
 import Core.Trail
+import Core.ClauseDB
+import Core.SolverState
 
 type ResolutionClause = IntMap.IntMap Lit
+type TrailElements    = [Var]
 type CurrentLevelVars = [Var]
+
+extractInfo :: (ClauseDB, SolverState, CID) -> (ResolutionClause, TrailElements, Reasons)
+extractInfo (db, ss, cid) =
+    (conflictClsToVar, trailEles, reasons tr)
+    where
+        conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid)
+        trailEles = currentLevelTrail tr
+        tr = trail ss
 
 analyze :: (ResolutionClause, TrailElements, Reasons) -> CurrentLevelVars -> Clauses -> (ResolutionClause, Var)
 analyze (resCl, trEles, rsns) currLvVars cls =

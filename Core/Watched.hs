@@ -3,6 +3,7 @@ module Core.Watched where
 import qualified Data.Map as Map
 import qualified Data.Set as Set
 import qualified Data.IntSet as IntSet
+import qualified Data.Sequence as Seq
 
 import Core.Var
 import Core.Lit
@@ -17,6 +18,19 @@ import Data.List (foldl')
 import qualified Data.IntMap as IntMap
 
 data IfConflict    = NoConflict | DoesConflict CID deriving (Show)
+
+propagate :: ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
+propagate db ss =
+    case Seq.viewl $ queue ss of -- may need to replace with helper function for better modularity (later)
+        Seq.EmptyL          -> (db, ss, NoConflict) -- if there is nothing to be propagated in the queue, do nothing
+        (Lit i) Seq.:< rest ->
+            case processWatched (negateLit (Lit i)) db ss of -- negation lit is better, revise later
+                (db', ss', DoesConflict cid ) -> (db', ss', DoesConflict cid)
+                (db', ss', NoConflict)        -> propagate db' ss'
+
+hasConflict :: (ClauseDB, SolverState, IfConflict) -> (ClauseDB, SolverState, Maybe CID)
+hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
+hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
 
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =

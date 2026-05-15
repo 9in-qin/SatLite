@@ -7,29 +7,24 @@ import Data.List
 import Core.Var
 import Core.Clause
 
-type Level         = Int
-type Levels        = IntMap.IntMap Level
-data Reason        = Decided | Propagated CID deriving (Eq, Ord, Show)
-type Reasons       = IntMap.IntMap Reason
-type TrailElements = [Var]
+type Level        = Int
+type LvBasedTrail = [Var]
+data Reason       = Decided | Propagated CID deriving (Eq, Ord, Show)
+type Reasons      = IntMap.IntMap Reason
+type Levels       = IntMap.IntMap Level
 
-data Trail = Trail
-    { currentLevel  :: Level
-    , lvBasedTrails :: [LvBasedTrail]
-    , reasons       :: Reasons
-    , levels        :: Levels
-    } deriving (Show)
+data Trail = Trail { currentLevel  :: Level
+                   , lvBasedTrails :: [LvBasedTrail]
+                   , reasons       :: Reasons
+                   , levels        :: Levels
+                   } deriving (Show)
 
 emptyTrail :: Trail
-emptyTrail =
-    Trail
-    { currentLevel  = 0
-    , lvBasedTrails = [[]]
-    , reasons       = IntMap.empty
-    , levels        = IntMap.empty
-    }
-
-type LvBasedTrail = [Var]
+emptyTrail = Trail { currentLevel  = 0
+                   , lvBasedTrails = [[]]
+                   , reasons       = IntMap.empty
+                   , levels        = IntMap.empty
+                   }
 
 newLevel :: Trail -> Trail
 newLevel tr =
@@ -58,11 +53,11 @@ currentLevelTrail tr =
 
 trailPopToLevel :: Trail -> Level -> (Trail, [Var])
 trailPopToLevel tr targetLv =
-    ( tr { currentLevel = targetLv
-         , lvBasedTrails = remainingTrails
-         , reasons       = foldl' deleteVar (reasons tr) poppedVars
-         , levels        = foldl' deleteVar (levels tr) poppedVars
-         }
+    (tr { currentLevel = targetLv
+        , lvBasedTrails = remainingTrails
+        , reasons       = foldl' deleteVar (reasons tr) poppedVars
+        , levels        = foldl' deleteVar (levels tr) poppedVars
+        }
     , poppedVars)
     where
         popSplit = currentLevel tr - targetLv
