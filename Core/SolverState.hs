@@ -10,12 +10,11 @@ import Core.Queue
 import Core.Assignment
 import Decide.VarActivity
 
-data SolverState = SolverState
-    { assignment :: Assignment
-    , level      :: Level
-    , queue      :: BCPqueue
-    , trail      :: Trail
-    , varActivity :: VarActivity
-    , conflictCount :: Int
-    , restartThreshold :: Int
-    } deriving (Show)
+data SolverState = SolverState { assignment       :: Assignment
+                               , level            :: Level
+                               , queue            :: BCPqueue
+                               , trail            :: Trail
+                               , varActivity      :: VarActivity
+                               , conflictCount    :: Int
+                               , restartThreshold :: Int
+                               } deriving (Show)

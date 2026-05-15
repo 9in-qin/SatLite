@@ -28,10 +28,6 @@ propagate db ss =
                 (db', ss', DoesConflict cid ) -> (db', ss', DoesConflict cid)
                 (db', ss', NoConflict)        -> propagate db' ss'
 
-hasConflict :: (ClauseDB, SolverState, IfConflict) -> (ClauseDB, SolverState, Maybe CID)
-hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
-hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
-
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =
     case IntMap.lookup (getLit lit) litsToCls of

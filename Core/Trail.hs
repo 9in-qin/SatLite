@@ -13,10 +13,10 @@ data Reason       = Decided | Propagated CID deriving (Eq, Ord, Show)
 type Reasons      = IntMap.IntMap Reason
 type Levels       = IntMap.IntMap Level
 
-data Trail = Trail { currentLevel  :: !Level
-                   , lvBasedTrails :: ![LvBasedTrail]
-                   , reasons       :: !Reasons
-                   , levels        :: !Levels
+data Trail = Trail { currentLevel  :: Level
+                   , lvBasedTrails :: [LvBasedTrail]
+                   , reasons       :: Reasons
+                   , levels        :: Levels
                    } deriving (Show)
 
 emptyTrail :: Trail

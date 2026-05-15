@@ -17,7 +17,6 @@ preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
 preprocess (cls, (numVars, numClauses)) =
     (ClauseDB
     { clauses       = dbClauses
-    , learnedIDs    = []
     , watchedLits   = IntMap.fromList $ zipWith watching [0..] cls'
     , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
     , varCount      = numVars

@@ -9,10 +9,8 @@ import Core.LitsToClauses
 
 type VarCount = Int
 
-data ClauseDB = ClauseDB
-    { clauses        :: Clauses
-    , learnedIDs     :: [CID]
-    , watchedLits    :: WatchedLits
-    , litsToClauses  :: LitsToClauses
-    , varCount       :: VarCount
-    } deriving (Show)
+data ClauseDB = ClauseDB { clauses       :: Clauses
+                         , watchedLits   :: WatchedLits
+                         , litsToClauses :: LitsToClauses
+                         , varCount      :: VarCount
+                         } deriving (Show)

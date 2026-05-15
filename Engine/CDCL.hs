@@ -1,10 +1,7 @@
 module Engine.CDCL where
 
-import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
-import qualified Data.IntSet as IntSet
 import qualified Data.Sequence as Seq
-import Data.List
 
 import Core.Var
 import Core.Lit
@@ -15,20 +12,18 @@ import Core.Watched
 import Core.Restart
 import Core.ClauseDB
 import Core.SolverState
-import Decide.Arbitrary
 import Decide.VSIDS
-import Core.Assignment
 import Decide.VarActivity
 import Engine.Analyze
 import Engine.Backjump
 
-data Result        = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
+data Result = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
 
 cdcl :: ClauseDB -> SolverState -> Result
 cdcl db ss =
     let propagation = propagate db ss
     in case hasConflict propagation of
-        (db', ss', Just cid) -> case level ss' of -- ss or ss'? as the level has not changed yet (ss' better)
+        (db', ss', Just cid) -> case currentLevel $ trail ss' of
             0  -> UNSAT
             lv -> let (conflictClsToVar, currentLevelVars, rsns) = extractInfo (db', ss', cid)
                       (learnedClause, firstUIP) = analyze (conflictClsToVar, currentLevelVars, rsns) currentLevelVars (clauses db')
@@ -44,11 +39,15 @@ cdcl db ss =
 
                       threshold = restartThreshold newSS
                       ifRestart = if newConflictCount == threshold then restart newDB newSS' else newSS'
-                      in cdcl newDB ifRestart
-        (db', ss', Nothing)  -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of -- readers: what unAssigned?
+                  in  cdcl newDB ifRestart
+        (db', ss', Nothing) -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of
             Nothing      -> SAT (db', ss')
             Just nextVar -> let ss0 = ss' { level = level ss' + 1, assignment = IntMap.insert (getVar nextVar) True $ assignment ss'
                                           , queue = enqueue (varToLit nextVar) $ queue ss'
                                           , trail = trailPush (newLevel $ trail ss') (nextVar, Decided)
                                           }
                             in cdcl db' ss0
+
+hasConflict :: (ClauseDB, SolverState, IfConflict) -> (ClauseDB, SolverState, Maybe CID)
+hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
+hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
