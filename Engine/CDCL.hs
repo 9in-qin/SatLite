@@ -25,17 +25,16 @@ cdcl db ss =
     in case hasConflict propagation of
         (db', ss', Just cid) -> case currentLevel $ trail ss' of
             0  -> UNSAT
-            lv -> let (conflictClsToVar, currentLevelVars, rsns) = extractInfo (db', ss', cid)
-                      (learnedClause, firstUIP) = analyze (conflictClsToVar, currentLevelVars, rsns) currentLevelVars (clauses db')
-                      learnedClause' = IntMap.elems learnedClause
-                      (newDB, newSS) = backjump db' ss' learnedClause' firstUIP lv
+            lv -> let (learned, firstUIP) = analyze (extractInfo (db', ss', cid)) (clauses db')
+                      learnedClause = IntMap.elems learned
+                      (newDB, newSS) = backjump db' ss' learnedClause firstUIP lv
                       newSS' = newSS { varActivity = refreshActivity
                                      , conflictCount = newConflictCount
                                      }
                       newConflictCount = conflictCount newSS + 1
                       refreshActivity = if newConflictCount `mod` 100 /= 0
-                                        then updateActivity (varActivity newSS) learnedClause'
-                                        else IntMap.map (* 0.5) $ updateActivity (varActivity newSS) learnedClause'
+                                        then updateActivity (varActivity newSS) learnedClause
+                                        else IntMap.map (* 0.5) $ updateActivity (varActivity newSS) learnedClause
 
                       threshold = restartThreshold newSS
                       ifRestart = if newConflictCount == threshold then restart newDB newSS' else newSS'

@@ -25,9 +25,9 @@ extractInfo (db, ss, cid) =
         trailEles = currentLevelTrail tr
         tr = trail ss
 
-analyze :: (ResolutionClause, TrailElements, Reasons) -> CurrentLevelVars -> Clauses -> (ResolutionClause, Var)
-analyze (resCl, trEles, rsns) currLvVars cls =
-    case exactlyOne resCl currLvVars of
+analyze :: (ResolutionClause, TrailElements, Reasons) -> Clauses -> (ResolutionClause, Var)
+analyze (resCl, trEles, rsns) cls =
+    case exactlyOne resCl trEles of
         Just firstUIP ->
             (resCl, firstUIP)
         Nothing       ->
@@ -38,10 +38,10 @@ analyze (resCl, trEles, rsns) currLvVars cls =
                             let
                                 resolvedCl = resolution resCl workingVar (cls IntMap.! cid)
                             in
-                                analyze (resolvedCl, remainingTrail, rsns) currLvVars cls
+                                analyze (resolvedCl, remainingTrail, rsns) cls
                         Decided        -> error "Should never reach this stage."
                 Nothing  ->
-                    analyze (resCl, remainingTrail, rsns) currLvVars cls
+                    analyze (resCl, remainingTrail, rsns) cls
     where
         workingVar     = head trEles
         remainingTrail = tail trEles
