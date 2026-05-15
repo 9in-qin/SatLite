@@ -68,5 +68,4 @@ trailPopToLevel tr targetLv =
         popSplit = currentLevel tr - targetLv
         (poppedTrails, remainingTrails) = splitAt popSplit (lvBasedTrails tr)
         poppedVars = concat poppedTrails
-        --unpoppedVars = concat remainingTrails
         deleteVar intMap var = IntMap.delete (getVar var) intMap

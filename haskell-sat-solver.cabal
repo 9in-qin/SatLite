@@ -82,6 +82,7 @@ executable haskell-sat-solver
         Decide.VarActivity
         Decide.VSIDS
 
+        Engine.Analyze
         Engine.CDCL
         Engine.DPLL
 
