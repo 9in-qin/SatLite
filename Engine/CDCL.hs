@@ -65,12 +65,12 @@ hasConflict (db, ss, NoConflict) = (db, ss, Nothing)
 hasConflict (db, ss, DoesConflict cid) = (db, ss, Just cid)
 
 extractInfo :: (ClauseDB, SolverState, CID) -> (ResolutionClause, TrailElements, Reasons)
-extractInfo (db, ss, cid) = let conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid) -- need to make it more readable
-                                trailEles = currentLevelTrail tr
-                            in (conflictClsToVar, trailEles, reasons tr)
-                            where
-                                --currentLevel = level ss
-                                tr = trail ss
+extractInfo (db, ss, cid) =
+    (conflictClsToVar, trailEles, reasons tr)
+    where
+        conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid)
+        trailEles = currentLevelTrail tr
+        tr = trail ss
 
 -- later need a new file for analyze and learn
 type ResolutionClause = IntMap.IntMap Lit
@@ -117,24 +117,31 @@ resolution resCl var cl = foldl' insertLit resClWithoutVar clWithoutVar
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
     (db{clauses = updatedClauses},
-     ss{assignment = updatedAssignment, level = backjumpLevel, queue = updatedQueue, trail = updatedTrail})
+     ss{ assignment = updatedAssignment
+       , level = backjumpLevel
+       , queue = updatedQueue
+       , trail = updatedTrail
+       })
     where
         updatedClauses = IntMap.insert newCID learnedCl cls
         backjumpLevel = if length learnedCl == 1 then 0
                         else foldl' levelChecker 0 learnedCl -- start with 0?
         updatedQueue = enqueue theLiteral Seq.empty
 
-        (poppedTrail, unpoppedVars) = trailPopToLevel tr backjumpLevel
-        updatedTrail = trailPush poppedTrail (firstUIP, Propagated newCID)
+        (trailAfterPop, poppedVars) = trailPopToLevel tr backjumpLevel
+        updatedTrail = trailPush trailAfterPop (firstUIP, Propagated newCID)
         
-        updatedAssignment = IntMap.insert (getVar firstUIP) theValue (IntMap.restrictKeys (assignment ss) (IntSet.fromList keptVars))
+        asgmt = assignment ss
+        asgmtWithoutPoppedVars = foldl' (\acc x -> IntMap.delete (getVar x) acc) asgmt poppedVars
+        updatedAssignment = IntMap.insert (getVar firstUIP) theValue asgmtWithoutPoppedVars--(IntMap.restrictKeys (assignment ss) (IntSet.fromList keptVars))
+
         newCID = length cls
         cls = clauses db
         tr = trail ss
         levelInfo = levels tr
         theLiteral = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
         theValue = litSign theLiteral
-        keptVars = map getVar unpoppedVars
+        --keptVars = map getVar unpoppedVars
 
         levelChecker :: Level -> Lit -> Level
         levelChecker lv lit = let litLv = levelInfo IntMap.! getVar (litToVar lit) in if litLv > lv && litLv /= currentLevel then litLv else lv

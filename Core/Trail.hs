@@ -63,10 +63,10 @@ trailPopToLevel tr targetLv =
          , reasons       = foldl' deleteVar (reasons tr) poppedVars
          , levels        = foldl' deleteVar (levels tr) poppedVars
          }
-    , unpoppedVars)
+    , poppedVars)
     where
         popSplit = currentLevel tr - targetLv
         (poppedTrails, remainingTrails) = splitAt popSplit (lvBasedTrails tr)
         poppedVars = concat poppedTrails
-        unpoppedVars = concat remainingTrails
+        --unpoppedVars = concat remainingTrails
         deleteVar intMap var = IntMap.delete (getVar var) intMap
