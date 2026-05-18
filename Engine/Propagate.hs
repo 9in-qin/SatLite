@@ -19,8 +19,8 @@ data IfConflict = NoConflict | DoesConflict CID deriving (Show)
 propagate :: ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 propagate db ss =
     case Seq.viewl $ queue ss of -- may need to replace with helper function for better modularity (later)
-        Seq.EmptyL      -> (db, ss, NoConflict) -- if there is nothing to be propagated in the queue, do nothing
-        lit Seq.:< rest ->
+        Seq.EmptyL   -> (db, ss, NoConflict) -- if there is nothing to be propagated in the queue, do nothing
+        lit Seq.:< _ ->
             case processWatched (negateLit lit) db ss of
                 (db', ss', DoesConflict cid ) -> (db', ss', DoesConflict cid)
                 (db', ss', NoConflict)        -> propagate db' ss'
@@ -28,12 +28,12 @@ propagate db ss =
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =
     case IntMap.lookup (getLit lit) litsToCls of
-        Nothing   -> (db, ss {queue = dequeue $ queue ss}, NoConflict) --dequeue is important, or cdcl will be an infinite loop
+        Nothing   -> (db, ss { queue = dequeue (queue ss) }, NoConflict) --dequeue is important, or cdcl will be an infinite loop
         Just cids ->
             let influencedCls = influencedClauses cids cls -- foldWithKey' omit toList
             in case processInfluenced lit influencedCls db ss of
-                (lit0, db0, ss0, DoesConflict cid) -> (db0, ss0 {queue = dequeue $ queue ss0}, DoesConflict cid)
-                (lit0, db0, ss0, NoConflict)       -> (db0, ss0 {queue = dequeue $ queue ss0}, NoConflict)
+                (lit0, db0, ss0, DoesConflict cid) -> (db0, ss0 {queue = dequeue (queue ss0)}, DoesConflict cid)
+                (lit0, db0, ss0, NoConflict)       -> (db0, ss0 {queue = dequeue (queue ss0)}, NoConflict)
     where
         cls       = clauses db
         litsToCls = litsToClauses db

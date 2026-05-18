@@ -50,7 +50,7 @@ processConflict lv cid db ss = (newDB, newSS)
 
 processDecide :: SolverState -> Var -> SolverState
 processDecide ss nextVar =
-    ss { assignment = IntMap.insert (getVar nextVar) True $ assignment ss
-       , queue = enqueue (varToLit nextVar) $ queue ss
-       , trail = trailPush (newLevel $ trail ss) (nextVar, Decided)
+    ss { assignment = IntMap.insert (getVar nextVar) True (assignment ss)
+       , queue = enqueue (varToLit nextVar) (queue ss)
+       , trail = trailPush (newLevel (trail ss)) (nextVar, Decided)
        }
