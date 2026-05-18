@@ -14,7 +14,7 @@ import Core.SolverState
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
-    (db { clauses = updatedClauses },
+    (db { clauses = updatedClauses , clauseCount = clauseCount db + 1},
      ss { assignment = updatedAssignment
         , queue      = updatedQueue
         , trail      = updatedTrail
@@ -32,7 +32,8 @@ backjump db ss learnedCl firstUIP currentLevel =
         asgmtWithoutPoppedVars = foldl' (\acc x -> IntMap.delete (getVar x) acc) asgmt poppedVars
         updatedAssignment = IntMap.insert (getVar firstUIP) theValue asgmtWithoutPoppedVars
 
-        newCID = length cls
+        --newCID = length cls
+        newCID = clauseCount db
         cls = clauses db
         tr = trail ss
         levelInfo = levels tr
