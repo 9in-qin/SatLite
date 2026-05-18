@@ -14,12 +14,12 @@ import Core.SolverState
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
-    (db{clauses = updatedClauses},
-     ss{ assignment = updatedAssignment
-       , level = backjumpLevel
-       , queue = updatedQueue
-       , trail = updatedTrail
-       })
+    (db { clauses = updatedClauses },
+     ss { assignment = updatedAssignment
+        , level      = backjumpLevel
+        , queue      = updatedQueue
+        , trail      = updatedTrail
+        })
     where
         updatedClauses = IntMap.insert newCID learnedCl cls
         backjumpLevel = if length learnedCl == 1 then 0
