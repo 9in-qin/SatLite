@@ -8,7 +8,6 @@ import Core.Lit
 import Core.Clause
 import Core.Queue
 import Core.Trail
-import Core.Watched
 import Core.Restart
 import Core.ClauseDB
 import Core.SolverState
@@ -16,6 +15,7 @@ import Decide.VSIDS
 import Decide.VarActivity
 import Engine.Analyze
 import Engine.Backjump
+import Engine.Propagate
 
 data Result = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
 
@@ -40,6 +40,7 @@ processConflict lv cid db ss = (newDB, newSS)
         (newDB, backjumpSS) = backjump db ss learnedClause firstUIP lv
         newConflictCount    = conflictCount backjumpSS + 1
         newVarActivity      = conflictBasedUpdate newConflictCount (varActivity backjumpSS) learnedClause
+
         updatedSS = backjumpSS { varActivity = newVarActivity
                                , conflictCount = newConflictCount
                                }

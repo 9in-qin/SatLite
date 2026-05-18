@@ -10,7 +10,7 @@ import Parser
 import Preprocess
 import Engine.CDCL as CDCL
 import Engine.DPLL as DPLL
-import Core.Watched
+import Engine.Propagate
 
 main :: IO ()
 main = do

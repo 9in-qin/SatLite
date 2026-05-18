@@ -75,7 +75,6 @@ executable haskell-sat-solver
         Core.SolverState
         Core.Trail
         Core.Var
-        Core.Watched
         Core.WatchedLits
 
         Decide.Arbitrary
@@ -86,6 +85,7 @@ executable haskell-sat-solver
         Engine.Backjump
         Engine.CDCL
         Engine.DPLL
+        Engine.Propagate
 
         MainOld
         Parser
