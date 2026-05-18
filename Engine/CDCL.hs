@@ -1,16 +1,15 @@
 module Engine.CDCL where
 
 import qualified Data.IntMap as IntMap
-import qualified Data.Sequence as Seq
 
-import Core.Var
-import Core.Lit
 import Core.Clause
-import Core.Queue
-import Core.Trail
-import Core.Restart
 import Core.ClauseDB
+import Core.Lit
+import Core.Queue
+import Core.Restart
 import Core.SolverState
+import Core.Trail
+import Core.Var
 import Decide.VSIDS
 import Decide.VarActivity
 import Engine.Analyze
