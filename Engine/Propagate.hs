@@ -18,38 +18,28 @@ data IfConflict = NoConflict | DoesConflict CID deriving (Show)
 
 propagate :: ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 propagate db ss =
-    case Seq.viewl $ queue ss of -- may need to replace with helper function for better modularity (later)
-        Seq.EmptyL      -> (db, ss, NoConflict) -- if there is nothing to be propagated in the queue, do nothing
+    case Seq.viewl (queue ss) of
+        Seq.EmptyL      -> (db, ss, NoConflict)
         lit Seq.:< rest ->
-            case processWatched (negateLit lit) db ss {queue = rest} of
+            case processWatched (negateLit lit) db ss { queue = rest } of
                 (db', ss', DoesConflict cid ) -> (db', ss', DoesConflict cid)
                 (db', ss', NoConflict)        -> propagate db' ss'
 
 processWatched :: Lit -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 processWatched lit db ss =
-    case IntMap.lookup (getLit lit) litsToCls of
+    case IntMap.lookup (getLit lit) (litsToClauses db) of
         Nothing   -> (db, ss, NoConflict)
-        Just cids ->
-            let influencedCls = influencedClauses cids cls -- foldWithKey' omit toList
-            in case processInfluenced lit influencedCls db ss of
-                (lit0, db0, ss0, DoesConflict cid) -> (db0, ss0, DoesConflict cid)
-                (lit0, db0, ss0, NoConflict)       -> (db0, ss0, NoConflict)
-    where
-        cls       = clauses db
-        litsToCls = litsToClauses db
+        Just cids -> processInfluenced lit cids db ss
 
-influencedClauses :: [CID] -> Clauses -> Clauses
-influencedClauses cids cls = IntMap.restrictKeys cls (IntSet.fromList cids) -- restrictKeys is more efficient
-
-processInfluenced :: Lit -> Clauses -> ClauseDB -> SolverState -> (Lit, ClauseDB, SolverState, IfConflict)
-processInfluenced lit cls db ss =
-    IntMap.foldlWithKey' step (lit, db, ss, NoConflict) cls
+processInfluenced :: Lit -> [CID] -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
+processInfluenced lit cids db ss =
+    foldl' step (db, ss, NoConflict) cids
     where
-        step (lit0, db0, ss0, DoesConflict cid) _ _ = (lit0, db0, ss0, DoesConflict cid)
-        step (lit0, db0, ss0, NoConflict) cid cl    =
-            case checkClause lit0 cid cl db0 ss0 of
-                (lit0, db1, ss1, NoConflict)        -> (lit0, db1, ss1, NoConflict)
-                (lit0, db1, ss1, DoesConflict cid1) -> (lit0, db1, ss1, DoesConflict cid1)
+        step acc@(_, _, DoesConflict _) _ = acc
+        step (db0, ss0, NoConflict) cid =
+            let cl = clauses db0 IntMap.! cid
+            in case checkClause lit cid cl db0 ss0 of
+                (_, db1, ss1, result) -> (db1, ss1, result)
 
 checkClause :: Lit -> CID -> Clause -> ClauseDB -> SolverState -> (Lit, ClauseDB, SolverState, IfConflict)
 checkClause lit cid cl db ss =
@@ -58,7 +48,7 @@ checkClause lit cid cl db ss =
             if ifLiteralTrue theOtherWatch otherWatchValue
                 then (lit, db, ss, NoConflict) -- if the other watch is already true, leave this clause alone
                 else maybe (lit, db, ss, DoesConflict cid) helper (findNewWatch asgmt cl lit theOtherWatch)
-        Nothing -> --(lit, db, ss, NoConflict) -- propagation happens here, update everything -----not really here
+        Nothing ->
             case findNewWatch asgmt cl lit theOtherWatch of
                     Nothing   -> let q'               = enqueue theOtherWatch q
                                      otherWatchNewVal = litSign theOtherWatch
