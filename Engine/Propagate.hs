@@ -47,18 +47,17 @@ checkClause lit cid cl db ss =
         Just otherWatchValue ->
             if ifLiteralTrue theOtherWatch otherWatchValue
             then (db, ss, NoConflict)
-            else maybe (db, ss, DoesConflict cid) processNewWatch (findNewWatch asgmt cl lit theOtherWatch)
+            else maybe (db, ss, DoesConflict cid) processWatchUpdate (findNewWatch asgmt cl lit theOtherWatch)
         Nothing ->
             case findNewWatch asgmt cl lit theOtherWatch of
-                Nothing   -> let q'               = enqueue theOtherWatch q
-                                 otherWatchNewVal = litSign theOtherWatch
+                Nothing   -> let otherWatchNewVal = litSign theOtherWatch
                                  assignment'      = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
                                  trail'           = trailPush (trail ss) (otherWatchVar, Propagated cid)
                              in (db, ss { assignment = assignment'
-                                        , queue      = q'
+                                        , queue      = enqueue theOtherWatch q
                                         , trail      = trail'
                                         }, NoConflict)
-                Just lit0 -> processNewWatch lit0
+                Just lit0 -> processWatchUpdate lit0
     where
         dbWatchedLits = watchedLits db
         (w0, w1)      = dbWatchedLits IntMap.! cid
@@ -69,15 +68,17 @@ checkClause lit cid cl db ss =
         q             = queue ss
         litsToCls     = litsToClauses db
 
-        processNewWatch (Lit newWatch) =
-            let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
-                updatedLitsToClauses = updateLitsToClauses litsToCls newWatch cid
-                --    case IntMap.lookup newWatch litsToCls of
-                --        Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
-                --        Nothing           -> IntMap.insert newWatch [cid] litsToCls
-                -- the following line update the original "lit" by removing it, which is a watched literal before
-                updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
-            in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
+        processWatchUpdate (Lit newWatch) =
+            let updatedWatchedLits    = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
+                lsToClsRemoveOldWatch = IntMap.adjust (delete cid) (getLit lit) litsToCls
+                -- lsToClsRemoveOldWatch = removeTest cid lit litsToCls
+                updatedLsToCls        = updateLitsToClauses lsToClsRemoveOldWatch newWatch cid
+            in (db { watchedLits   = updatedWatchedLits
+                   , litsToClauses = updatedLsToCls
+                   }, ss, NoConflict)
+
+-- removeTest :: CID -> Lit -> LitsToClauses -> LitsToClauses
+-- removeTest cid' lit' litsToCls' = IntMap.adjust (delete cid') (getLit lit') litsToCls'
 
 findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
 findNewWatch asgmt [_, _] oldWatch otherWatch = Nothing
