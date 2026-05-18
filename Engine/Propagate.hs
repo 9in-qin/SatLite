@@ -68,39 +68,25 @@ checkClause lit cid cl db ss =
         q             = queue ss
         litsToCls     = litsToClauses db
 
-        helper newWatch = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
-                              updatedLitsToClauses =
-                                 case IntMap.lookup newWatch litsToCls of
-                                     Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
-                                     Nothing           -> IntMap.insert newWatch [cid] litsToCls
-                              -- the following line update the original "lit" by removing it, which is a watched literal before
-                              updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
-                          in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
+        helper (Lit newWatch) = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
+                                    updatedLitsToClauses =
+                                       case IntMap.lookup newWatch litsToCls of
+                                           Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
+                                           Nothing           -> IntMap.insert newWatch [cid] litsToCls
+                                    -- the following line update the original "lit" by removing it, which is a watched literal before
+                                    updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
+                                in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
 
-findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Int
+findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
 findNewWatch asgmt [_, _] oldWatch otherWatch = Nothing
 findNewWatch asgmt cl oldWatch otherWatch =
     step cl
     where
         step [] = Nothing
-        step (l:ls)
-            | l == oldWatch || l == otherWatch = step ls
-            | otherwise =
-                case literalType asgmt l of
-                    LitFalse -> step ls
-                    _        -> Just (getLit l)
-
--- findNewWatch asgmt [_] lit0 lit1 = Nothing -- should never happen, cause unit clause should be automatically true
--- findNewWatch asgmt cl lit0 lit1 =
---     case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
---         (_, LitFalse)  -> Nothing
---         (Just resultLit, _) -> Just (getLit resultLit)
---     where
---         newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
-
---         trueOrUnassigned :: (Maybe Lit, LitType) -> Lit -> (Maybe Lit, LitType)
---         trueOrUnassigned (potentialLit, LitTrue) _   = (potentialLit, LitTrue)
---         trueOrUnassigned (potentialLit, litType) lit =
---             case literalType asgmt lit of
---                 LitFalse -> (potentialLit, litType)
---                 tOrU     -> (Just lit, tOrU)
+        step (lit:lits)
+            | lit == oldWatch || lit == otherWatch = step lits
+            | otherwise = case literalType asgmt lit of
+                LitFalse -> step lits
+                _        -> Just lit
+            -- | literalType asgmt lit == LitFalse = step lits
+            -- | otherwise = Just lit

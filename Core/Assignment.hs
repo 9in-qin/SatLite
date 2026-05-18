@@ -6,7 +6,7 @@ import Core.Var
 import Core.Lit
 
 type Assignment = IntMap.IntMap Bool
-data LitType    = LitTrue | LitFalse | LitUnassigned deriving (Show)
+data LitType    = LitTrue | LitFalse | LitUnassigned
 
 literalType :: Assignment -> Lit -> LitType
 literalType asgmt lit =
