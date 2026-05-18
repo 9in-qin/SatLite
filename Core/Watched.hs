@@ -78,7 +78,6 @@ checkClause lit cid cl db ss =
         litsToCls = litsToClauses db
         asgmt     = assignment ss
         q         = queue ss
-        l         = level ss
 
         helper newWatch = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
                               updatedLitsToClauses =

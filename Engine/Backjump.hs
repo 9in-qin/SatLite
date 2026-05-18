@@ -16,7 +16,6 @@ backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, Solv
 backjump db ss learnedCl firstUIP currentLevel =
     (db { clauses = updatedClauses },
      ss { assignment = updatedAssignment
-        , level      = backjumpLevel
         , queue      = updatedQueue
         , trail      = updatedTrail
         })

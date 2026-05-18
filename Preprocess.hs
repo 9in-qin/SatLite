@@ -23,7 +23,6 @@ preprocess (cls, (numVars, numClauses)) =
     },
     SolverState
     { assignment = foldl' assignmentConstructor IntMap.empty unitLits'
-    , level      = 0
     , queue      = enqueueUnitClauses dbClauses Seq.empty
     , trail      = foldl' trailPush emptyTrail varAndRsn
     , varActivity =  IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]

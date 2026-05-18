@@ -11,7 +11,6 @@ import Core.Assignment
 import Decide.VarActivity
 
 data SolverState = SolverState { assignment       :: Assignment
-                               , level            :: Level
                                , queue            :: BCPqueue
                                , trail            :: Trail
                                , varActivity      :: VarActivity

@@ -14,7 +14,6 @@ import Core.Lit
 restart :: ClauseDB -> SolverState -> SolverState
 restart db ss =
     ss {assignment = foldl' assignmentConstructor IntMap.empty unitCls,
-        level = 0,
         queue = enqueueUnitClauses cls Seq.empty,
         trail      = foldl' trailPush emptyTrail varAndRsn,
         conflictCount = 0,
