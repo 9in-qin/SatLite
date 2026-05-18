@@ -7,6 +7,7 @@ import Data.List
 
 import Core.Var
 import Core.Lit
+import Core.LitsToClauses
 import Core.Trail
 import Core.Clause
 import Core.ClauseDB
@@ -45,19 +46,19 @@ checkClause lit cid cl db ss =
     case IntMap.lookup otherWatchKey asgmt of
         Just otherWatchValue ->
             if ifLiteralTrue theOtherWatch otherWatchValue
-                then (db, ss, NoConflict)
-                else maybe (db, ss, DoesConflict cid) helper (findNewWatch asgmt cl lit theOtherWatch)
+            then (db, ss, NoConflict)
+            else maybe (db, ss, DoesConflict cid) processNewWatch (findNewWatch asgmt cl lit theOtherWatch)
         Nothing ->
             case findNewWatch asgmt cl lit theOtherWatch of
-                    Nothing   -> let q'               = enqueue theOtherWatch q
-                                     otherWatchNewVal = litSign theOtherWatch
-                                     assignment'      = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
-                                     trail'           = trailPush (trail ss) (otherWatchVar, Propagated cid)
-                                 in (db, ss { assignment = assignment'
-                                            , queue      = q'
-                                            , trail      = trail'
-                                            }, NoConflict)
-                    Just lit0 -> helper lit0
+                Nothing   -> let q'               = enqueue theOtherWatch q
+                                 otherWatchNewVal = litSign theOtherWatch
+                                 assignment'      = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
+                                 trail'           = trailPush (trail ss) (otherWatchVar, Propagated cid)
+                             in (db, ss { assignment = assignment'
+                                        , queue      = q'
+                                        , trail      = trail'
+                                        }, NoConflict)
+                Just lit0 -> processNewWatch lit0
     where
         dbWatchedLits = watchedLits db
         (w0, w1)      = dbWatchedLits IntMap.! cid
@@ -68,14 +69,15 @@ checkClause lit cid cl db ss =
         q             = queue ss
         litsToCls     = litsToClauses db
 
-        helper (Lit newWatch) = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
-                                    updatedLitsToClauses =
-                                       case IntMap.lookup newWatch litsToCls of
-                                           Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
-                                           Nothing           -> IntMap.insert newWatch [cid] litsToCls
-                                    -- the following line update the original "lit" by removing it, which is a watched literal before
-                                    updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
-                                in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
+        processNewWatch (Lit newWatch) =
+            let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
+                updatedLitsToClauses = updateLitsToClauses litsToCls newWatch cid
+                --    case IntMap.lookup newWatch litsToCls of
+                --        Just newWatchedBy -> IntMap.insert newWatch (cid:newWatchedBy) litsToCls
+                --        Nothing           -> IntMap.insert newWatch [cid] litsToCls
+                -- the following line update the original "lit" by removing it, which is a watched literal before
+                updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
+            in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
 
 findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
 findNewWatch asgmt [_, _] oldWatch otherWatch = Nothing
@@ -88,5 +90,3 @@ findNewWatch asgmt cl oldWatch otherWatch =
             | otherwise = case literalType asgmt lit of
                 LitFalse -> step lits
                 _        -> Just lit
-            -- | literalType asgmt lit == LitFalse = step lits
-            -- | otherwise = Just lit
