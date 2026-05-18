@@ -38,33 +38,35 @@ processInfluenced lit cids db ss =
         step acc@(_, _, DoesConflict _) _ = acc
         step (db0, ss0, NoConflict) cid =
             let cl = clauses db0 IntMap.! cid
-            in case checkClause lit cid cl db0 ss0 of
-                (_, db1, ss1, result) -> (db1, ss1, result)
+            in checkClause lit cid cl db0 ss0
 
-checkClause :: Lit -> CID -> Clause -> ClauseDB -> SolverState -> (Lit, ClauseDB, SolverState, IfConflict)
+checkClause :: Lit -> CID -> Clause -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 checkClause lit cid cl db ss =
-    case IntMap.lookup (getVar theOtherWatchVar) asgmt of
+    case IntMap.lookup otherWatchKey asgmt of
         Just otherWatchValue ->
             if ifLiteralTrue theOtherWatch otherWatchValue
-                then (lit, db, ss, NoConflict) -- if the other watch is already true, leave this clause alone
-                else maybe (lit, db, ss, DoesConflict cid) helper (findNewWatch asgmt cl lit theOtherWatch)
+                then (db, ss, NoConflict)
+                else maybe (db, ss, DoesConflict cid) helper (findNewWatch asgmt cl lit theOtherWatch)
         Nothing ->
             case findNewWatch asgmt cl lit theOtherWatch of
                     Nothing   -> let q'               = enqueue theOtherWatch q
                                      otherWatchNewVal = litSign theOtherWatch
-                                     assignment'      = IntMap.insert (getVar theOtherWatchVar) otherWatchNewVal (assignment ss)
-                                     trail'           = trailPush (trail ss) (theOtherWatchVar, Propagated cid)
-                                 in (lit, db, ss {assignment = assignment', queue = q', trail = trail'}, NoConflict)
+                                     assignment'      = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
+                                     trail'           = trailPush (trail ss) (otherWatchVar, Propagated cid)
+                                 in (db, ss { assignment = assignment'
+                                            , queue      = q'
+                                            , trail      = trail'
+                                            }, NoConflict)
                     Just lit0 -> helper lit0
     where
-        cls       = clauses db
         dbWatchedLits = watchedLits db
-        watched   = dbWatchedLits IntMap.! cid
-        theOtherWatch = let first = fst watched in if first == lit then snd watched else first
-        theOtherWatchVar = litToVar theOtherWatch
-        litsToCls = litsToClauses db
-        asgmt     = assignment ss
-        q         = queue ss
+        (w0, w1)      = dbWatchedLits IntMap.! cid
+        theOtherWatch = if lit /= w0 then w0 else w1
+        otherWatchVar = litToVar theOtherWatch
+        otherWatchKey = getVar otherWatchVar
+        asgmt         = assignment ss
+        q             = queue ss
+        litsToCls     = litsToClauses db
 
         helper newWatch = let updatedWatchedLits = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
                               updatedLitsToClauses =
@@ -73,21 +75,32 @@ checkClause lit cid cl db ss =
                                      Nothing           -> IntMap.insert newWatch [cid] litsToCls
                               -- the following line update the original "lit" by removing it, which is a watched literal before
                               updatedLitsToClauses' = IntMap.insert (getLit lit) [cid' | cid' <- litsToCls IntMap.! getLit lit, cid' /= cid] updatedLitsToClauses
-                          in (lit, db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
+                          in (db { watchedLits = updatedWatchedLits, litsToClauses = updatedLitsToClauses'}, ss, NoConflict)
 
 findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Int
-findNewWatch asgmt [_] lit0 lit1   = Nothing -- should be checked ealier instead of in this function, revise later
-findNewWatch asgmt [_,_] lit0 lit1 = Nothing
-findNewWatch asgmt cl lit0 lit1    =
-    case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
-        (_, LitFalse)  -> Nothing
-        (Just resultLit, _) -> Just (getLit resultLit)
+findNewWatch asgmt [_, _] oldWatch otherWatch = Nothing
+findNewWatch asgmt cl oldWatch otherWatch =
+    step cl
     where
-        newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
+        step [] = Nothing
+        step (l:ls)
+            | l == oldWatch || l == otherWatch = step ls
+            | otherwise =
+                case literalType asgmt l of
+                    LitFalse -> step ls
+                    _        -> Just (getLit l)
 
-        trueOrUnassigned :: (Maybe Lit, LitType) -> Lit -> (Maybe Lit, LitType)
-        trueOrUnassigned (potentialLit, LitTrue) _   = (potentialLit, LitTrue)
-        trueOrUnassigned (potentialLit, litType) lit =
-            case literalType asgmt lit of
-                LitFalse -> (potentialLit, litType)
-                tOrU     -> (Just lit, tOrU)
+-- findNewWatch asgmt [_] lit0 lit1 = Nothing -- should never happen, cause unit clause should be automatically true
+-- findNewWatch asgmt cl lit0 lit1 =
+--     case foldl' trueOrUnassigned (Nothing, LitFalse) newCl of
+--         (_, LitFalse)  -> Nothing
+--         (Just resultLit, _) -> Just (getLit resultLit)
+--     where
+--         newCl = [lit | lit <- cl, lit /= lit0 && lit /= lit1]
+
+--         trueOrUnassigned :: (Maybe Lit, LitType) -> Lit -> (Maybe Lit, LitType)
+--         trueOrUnassigned (potentialLit, LitTrue) _   = (potentialLit, LitTrue)
+--         trueOrUnassigned (potentialLit, litType) lit =
+--             case literalType asgmt lit of
+--                 LitFalse -> (potentialLit, litType)
+--                 tOrU     -> (Just lit, tOrU)

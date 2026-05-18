@@ -40,7 +40,7 @@ processConflict lv cid db ss = (newDB, newSS)
         newConflictCount    = conflictCount backjumpSS + 1
         newVarActivity      = conflictBasedUpdate newConflictCount (varActivity backjumpSS) learnedClause
 
-        updatedSS = backjumpSS { varActivity = newVarActivity
+        updatedSS = backjumpSS { varActivity   = newVarActivity
                                , conflictCount = newConflictCount
                                }
                                

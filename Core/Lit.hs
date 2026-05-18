@@ -7,7 +7,6 @@ import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
 
 newtype Lit = Lit Int deriving (Eq, Ord, Show)
-data LitType       = LitTrue | LitFalse | LitUnassigned deriving (Show)
 
 getLit :: Lit -> Int
 getLit (Lit i) = i
