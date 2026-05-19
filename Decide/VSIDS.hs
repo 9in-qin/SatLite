@@ -12,10 +12,10 @@ mostActiveVar asgmt varAC
         Nothing
     | otherwise =
         Just $ Var mostActVar
-        where
-            (mostActVar, _) = IntMap.foldlWithKey' mostActive (-1, - (1 / 0)) varAC
+    where
+        (mostActVar, _) = IntMap.foldlWithKey' mostActive (-1, - (1 / 0)) varAC
 
-            mostActive curMost@(var, score) var' score'
-                | IntMap.member var' asgmt = curMost
-                | score' > score = (var', score')
-                | otherwise = curMost
+        mostActive curMost@(var, score) var' score'
+            | IntMap.member var' asgmt = curMost
+            | score' > score = (var', score')
+            | otherwise = curMost
