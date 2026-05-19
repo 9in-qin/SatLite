@@ -67,7 +67,6 @@ executable haskell-sat-solver
         Core.Assignment
         Core.Clause
         Core.ClauseDB
-        Core.LBD
         Core.Lit
         Core.LitsToClauses
         Core.Queue
