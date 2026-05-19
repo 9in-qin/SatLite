@@ -1,6 +1,5 @@
 module Preprocess where
 
-import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
 import qualified Data.Sequence as Seq
 import Data.List
@@ -15,21 +14,19 @@ import Core.Queue
 
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
 preprocess (cls, (numVars, numClauses)) =
-    (ClauseDB
-    { clauses       = dbClauses
-    , clauseCount   = length dbClauses
-    , watchedLits   = IntMap.fromList $ zipWith watching [0..] cls'
-    , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
-    , varCount      = numVars
-    },
-    SolverState
-    { assignment = foldl' assignmentConstructor IntMap.empty unitLits'
-    , queue      = enqueueUnitClauses dbClauses Seq.empty
-    , trail      = foldl' trailPush emptyTrail varAndRsn
-    , varActivity =  IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]
-    , conflictCount = 0
-    , restartThreshold = 100
-    })
+    (ClauseDB { clauses       = dbClauses
+              , clauseCount   = length dbClauses
+              , watchedLits   = IntMap.fromList $ zipWith watching [0..] cls'
+              , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
+              , varCount      = numVars
+              },
+    SolverState { assignment       = foldl' assignmentConstructor IntMap.empty unitLits'
+                , queue            = enqueueUnitClauses dbClauses Seq.empty
+                , trail            = foldl' trailPush emptyTrail varAndRsn
+                , varActivity      = IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]
+                , conflictCount    = 0
+                , restartThreshold = 100
+                })
     where
         dbClauses = IntMap.fromList $ zipWith listToClause [0..] cls'
         unitLits  = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
@@ -50,13 +47,9 @@ adjustIndex = map step
 assignmentConstructor :: IntMap.IntMap Bool -> Lit -> IntMap.IntMap Bool
 assignmentConstructor currentAssignment lit = IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
 
--- trailConstructor :: Trail -> Lit -> Trail
--- trailConstructor tr lit = (litToVar lit, litSign lit, 0, Propagated 0):tr
-
 listToClause :: CID -> [Int] -> (CID, [Lit])
 listToClause cid l = (cid, map Lit l)
 
--- | Enqueue all unit literals in the BCPqueue for the first round propagation
 enqueueUnitClauses :: Clauses -> BCPqueue -> BCPqueue
 enqueueUnitClauses cls q = q Seq.>< Seq.fromList [ l | [l] <- IntMap.elems cls ]
 
