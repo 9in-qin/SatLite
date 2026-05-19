@@ -1,25 +1,21 @@
 module Decide.VSIDS where
 
-import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
-import qualified Data.Set as Set
-import Data.List
 
-import Core.Var
-import Core.ClauseDB
-import Core.SolverState
 import Core.Assignment
+import Core.Var
 import Decide.VarActivity
 
-mostActiveVar :: VarCount -> Assignment -> VarActivity -> Maybe Var
-mostActiveVar totalVar asgmt varAC
-    | length asgmt == totalVar =
+mostActiveVar :: Assignment -> VarActivity -> Maybe Var
+mostActiveVar asgmt varAC
+    | mostActVar == -1 =
         Nothing
     | otherwise =
-        Just $ Var (fst nextVar)--(head notAssigned)
+        Just $ Var mostActVar
         where
-            nextVar = IntMap.foldlWithKey' mostActive (0, 0.0) varAC
-            mostActive (var, score) var' score' =
-                case IntMap.lookup var' asgmt of
-                    Nothing -> if score' > score then (var', score') else (var, score)
-                    _       -> (var, score)
+            (mostActVar, _) = IntMap.foldlWithKey' mostActive (-1, - (1 / 0)) varAC
+
+            mostActive curMost@(var, score) var' score'
+                | IntMap.member var' asgmt = curMost
+                | score' > score = (var', score')
+                | otherwise = curMost

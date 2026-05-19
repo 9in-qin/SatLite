@@ -26,7 +26,7 @@ cdcl db ss =
             0  -> UNSAT
             lv -> let (newDB, newSS) = processConflict lv cid db' ss'
                   in cdcl newDB newSS
-        (db', ss', NoConflict) -> case mostActiveVar (varCount db') (assignment ss') (varActivity ss') of
+        (db', ss', NoConflict) -> case mostActiveVar (assignment ss') (varActivity ss') of
             Nothing      -> SAT (db', ss')
             Just nextVar -> let newSS = processDecide ss' nextVar
                             in cdcl db' newSS

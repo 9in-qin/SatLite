@@ -11,13 +11,15 @@ type VarActivity = IntMap.IntMap Double
 conflictBasedUpdate :: Int -> VarActivity -> [Lit] -> VarActivity
 conflictBasedUpdate conflictCount varAC learnedCl
     | conflictCount `mod` 100 /= 0 =
-        updateActivity varAC learnedCl
+        updatedVarAct
     | otherwise =
-        IntMap.map (* 0.5) $ updateActivity varAC learnedCl
+        IntMap.map (* 0.5) updatedVarAct
+    where
+        updatedVarAct = updateActivity varAC learnedCl
 
 updateActivity :: VarActivity -> Clause -> VarActivity
-updateActivity = foldl' updateCertainVar
-    --foldl' (\ac (Lit i) -> IntMap.insertWith (+) (getVar $ litToVar (Lit i)) 1.0 ac)
+updateActivity =
+    foldl' updateCertainVar
     where
         updateCertainVar :: IntMap.IntMap Double -> Lit -> IntMap.IntMap Double
-        updateCertainVar ac lit = IntMap.insertWith (+) (getVar $ litToVar lit) 1.0 ac
+        updateCertainVar acc lit = IntMap.insertWith (+) (getVar $ litToVar lit) 1.0 acc
