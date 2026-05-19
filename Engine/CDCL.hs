@@ -22,7 +22,7 @@ cdcl :: ClauseDB -> SolverState -> Result
 cdcl db ss =
     let propagation = propagate db ss
     in case propagation of
-        (db', ss', DoesConflict cid) -> case currentLevel $ trail ss' of
+        (db', ss', DoesConflict cid) -> case currentLevel (trail ss') of
             0  -> UNSAT
             lv -> let (newDB, newSS) = processConflict lv cid db' ss'
                   in cdcl newDB newSS
@@ -51,6 +51,6 @@ processConflict lv cid db ss = (newDB, newSS)
 processDecide :: SolverState -> Var -> SolverState
 processDecide ss nextVar =
     ss { assignment = IntMap.insert (getVar nextVar) True (assignment ss)
-       , queue = enqueue (varToLit nextVar) (queue ss)
-       , trail = trailPush (newLevel (trail ss)) (nextVar, Decided)
+       , queue      = enqueue (varToLit nextVar) (queue ss)
+       , trail      = trailPush (newLevel (trail ss)) (nextVar, Decided)
        }

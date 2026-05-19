@@ -1,17 +1,14 @@
 module Engine.Analyze where
 
-import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
-import qualified Data.IntSet as IntSet
-import qualified Data.Sequence as Seq
 import Data.List
 
-import Core.Var
-import Core.Lit
 import Core.Clause
-import Core.Trail
 import Core.ClauseDB
+import Core.Lit
 import Core.SolverState
+import Core.Trail
+import Core.Var
 
 type ResolutionClause = IntMap.IntMap Lit
 type TrailElements    = [Var]
@@ -19,29 +16,26 @@ type CurrentLevelVars = [Var]
 
 extractInfo :: (ClauseDB, SolverState, CID) -> (ResolutionClause, TrailElements, Reasons)
 extractInfo (db, ss, cid) =
-    (conflictClsToVar, trailEles, reasons tr)
+    (resCl, trailEles, reasons tr)
     where
-        conflictClsToVar = IntMap.fromList $ map (\lit -> (getVar $ litToVar lit, lit)) (clauses db IntMap.! cid)
-        trailEles = currentLevelTrail tr
-        tr = trail ss
+        conflictCl = clauses db IntMap.! cid
+        resCl      = IntMap.fromList $ map (\lit -> (getVar (litToVar lit), lit)) conflictCl
+        trailEles  = currentLevelTrail tr
+        tr         = trail ss
 
 analyze :: (ResolutionClause, TrailElements, Reasons) -> Clauses -> (ResolutionClause, Var)
 analyze (resCl, trEles, rsns) cls =
     case exactlyOne resCl trEles of
-        Just firstUIP ->
-            (resCl, firstUIP)
+        Just firstUIP -> (resCl, firstUIP)
         Nothing       ->
             case IntMap.lookup (getVar workingVar) resCl of
                 Just lit ->
                     case rsns IntMap.! getVar workingVar of
                         Propagated cid ->
-                            let
-                                resolvedCl = resolution resCl workingVar (cls IntMap.! cid)
-                            in
-                                analyze (resolvedCl, remainingTrail, rsns) cls
-                        Decided        -> error "Should never reach this stage."
-                Nothing  ->
-                    analyze (resCl, remainingTrail, rsns) cls
+                            let resolvedCl = resolution resCl workingVar (cls IntMap.! cid)
+                            in analyze (resolvedCl, remainingTrail, rsns) cls
+                        Decided -> error "Should never reach this stage."
+                Nothing -> analyze (resCl, remainingTrail, rsns) cls
     where
         workingVar     = head trEles
         remainingTrail = tail trEles
@@ -55,10 +49,12 @@ exactlyOne resCl currLvVars =
         inResCl var = IntMap.member (getVar var) resCl
 
 resolution :: ResolutionClause -> Var -> Clause -> ResolutionClause
-resolution resCl var cl = foldl' insertLit resClWithoutVar clWithoutVar
+resolution resCl var cl =
+    foldl' insertLit resClWithoutVar clWithoutVar
     where
         resClWithoutVar = IntMap.delete (getVar var) resCl
         clWithoutVar    = filter (\lit -> litToVar lit /= var) cl
 
         insertLit :: ResolutionClause -> Lit -> ResolutionClause
-        insertLit resCl' lit' = IntMap.insert (getVar $ litToVar lit') lit' resCl'
+        insertLit resCl' lit' =
+            IntMap.insert (getVar (litToVar lit')) lit' resCl'

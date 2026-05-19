@@ -3,8 +3,8 @@ module Core.Trail where
 import qualified Data.IntMap as IntMap
 import Data.List
 
-import Core.Var
 import Core.Clause
+import Core.Var
 
 type Level        = Int
 type LvBasedTrail = [Var]

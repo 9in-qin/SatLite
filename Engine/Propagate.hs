@@ -5,15 +5,15 @@ import qualified Data.IntMap as IntMap
 import qualified Data.IntSet as IntSet
 import Data.List
 
-import Core.Var
-import Core.Lit
-import Core.LitsToClauses
-import Core.Trail
+import Core.Assignment
 import Core.Clause
 import Core.ClauseDB
-import Core.SolverState
+import Core.Lit
+import Core.LitsToClauses
 import Core.Queue
-import Core.Assignment
+import Core.SolverState
+import Core.Trail
+import Core.Var
 
 data IfConflict = NoConflict | DoesConflict CID deriving (Show)
 
@@ -47,38 +47,32 @@ checkClause lit cid cl db ss =
         Just otherWatchValue ->
             if ifLiteralTrue theOtherWatch otherWatchValue
             then (db, ss, NoConflict)
-            else maybe (db, ss, DoesConflict cid) processWatchUpdate (findNewWatch asgmt cl lit theOtherWatch)
+            else maybe (db, ss, DoesConflict cid) processWatchUpdate ptnlNewWatch
         Nothing ->
-            case findNewWatch asgmt cl lit theOtherWatch of
-                Nothing   -> let otherWatchNewVal = litSign theOtherWatch
-                                 assignment'      = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
-                                 trail'           = trailPush (trail ss) (otherWatchVar, Propagated cid)
-                             in (db, ss { assignment = assignment'
-                                        , queue      = enqueue theOtherWatch q
-                                        , trail      = trail'
-                                        }, NoConflict)
-                Just lit0 -> processWatchUpdate lit0
+            maybe unitPropagateOtherWatch processWatchUpdate ptnlNewWatch
     where
         dbWatchedLits = watchedLits db
         (w0, w1)      = dbWatchedLits IntMap.! cid
         theOtherWatch = if lit /= w0 then w0 else w1
         otherWatchVar = litToVar theOtherWatch
         otherWatchKey = getVar otherWatchVar
+        ptnlNewWatch  = findNewWatch asgmt cl lit theOtherWatch
         asgmt         = assignment ss
         q             = queue ss
         litsToCls     = litsToClauses db
 
         processWatchUpdate (Lit newWatch) =
-            let updatedWatchedLits    = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
-                lsToClsRemoveOldWatch = IntMap.adjust (delete cid) (getLit lit) litsToCls
-                -- lsToClsRemoveOldWatch = removeTest cid lit litsToCls
-                updatedLsToCls        = updateLitsToClauses lsToClsRemoveOldWatch newWatch cid
-            in (db { watchedLits   = updatedWatchedLits
-                   , litsToClauses = updatedLsToCls
+            let lsToClsRemoveOldWatch = IntMap.adjust (delete cid) (getLit lit) litsToCls
+            in (db { watchedLits   = IntMap.insert cid (Lit newWatch, theOtherWatch) dbWatchedLits
+                   , litsToClauses = updateLitsToClauses lsToClsRemoveOldWatch newWatch cid
                    }, ss, NoConflict)
 
--- removeTest :: CID -> Lit -> LitsToClauses -> LitsToClauses
--- removeTest cid' lit' litsToCls' = IntMap.adjust (delete cid') (getLit lit') litsToCls'
+        unitPropagateOtherWatch =
+            let otherWatchNewVal = litSign theOtherWatch
+            in (db, ss { assignment = IntMap.insert otherWatchKey otherWatchNewVal (assignment ss)
+                       , queue      = enqueue theOtherWatch q
+                       , trail      = trailPush (trail ss) (otherWatchVar, Propagated cid)
+                       }, NoConflict)
 
 findNewWatch :: Assignment -> Clause -> Lit -> Lit -> Maybe Lit
 findNewWatch asgmt [_, _] oldWatch otherWatch = Nothing

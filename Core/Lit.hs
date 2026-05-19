@@ -3,8 +3,6 @@ module Core.Lit where
 import Core.Var
 
 import Data.Bits
-import qualified Data.Map as Map
-import qualified Data.IntMap as IntMap
 
 newtype Lit = Lit Int deriving (Eq, Ord, Show)
 
