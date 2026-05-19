@@ -1,8 +1,8 @@
 module Core.Lit where
 
-import Core.Var
-
 import Data.Bits
+
+import Core.Var
 
 newtype Lit = Lit Int deriving (Eq, Ord, Show)
 
