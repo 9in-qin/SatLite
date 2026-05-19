@@ -14,31 +14,31 @@ import Core.SolverState
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
-    (db { clauses = updatedClauses , clauseCount = clauseCount db + 1},
+    (db { clauses     = IntMap.insert newCID learnedCl (clauses db)
+        , clauseCount = clauseCount db + 1
+        },
      ss { assignment = updatedAssignment
-        , queue      = updatedQueue
-        , trail      = updatedTrail
+        , queue      = enqueue theLiteral Seq.empty
+        , trail      = trailPush trailAfterPop (firstUIP, Propagated newCID)
         })
     where
-        updatedClauses = IntMap.insert newCID learnedCl cls
-        backjumpLevel = if length learnedCl == 1 then 0
-                        else foldl' levelChecker 0 learnedCl -- start with 0?
-        updatedQueue = enqueue theLiteral Seq.empty
-
-        (trailAfterPop, poppedVars) = trailPopToLevel tr backjumpLevel
-        updatedTrail = trailPush trailAfterPop (firstUIP, Propagated newCID)
-        
-        asgmt = assignment ss
+        backjumpLevel          = case learnedCl of
+                                        [_] -> 0
+                                        _   -> foldl' levelChecker 0 learnedCl
+        (trailAfterPop,
+         poppedVars)           = trailPopToLevel tr backjumpLevel
+        asgmt                  = assignment ss
         asgmtWithoutPoppedVars = foldl' (\acc x -> IntMap.delete (getVar x) acc) asgmt poppedVars
-        updatedAssignment = IntMap.insert (getVar firstUIP) theValue asgmtWithoutPoppedVars
-
-        --newCID = length cls
-        newCID = clauseCount db
-        cls = clauses db
-        tr = trail ss
-        levelInfo = levels tr
-        theLiteral = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
-        theValue = litSign theLiteral
+        updatedAssignment      = IntMap.insert (getVar firstUIP) theValue asgmtWithoutPoppedVars
+        newCID                 = clauseCount db
+        tr                     = trail ss
+        levelInfo              = levels tr
+        theLiteral             = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
+        theValue               = litSign theLiteral
 
         levelChecker :: Level -> Lit -> Level
-        levelChecker lv lit = let litLv = levelInfo IntMap.! getVar (litToVar lit) in if litLv > lv && litLv /= currentLevel then litLv else lv
+        levelChecker lv lit =
+            let litLv = levelInfo IntMap.! getVar (litToVar lit)
+            in if litLv > lv && litLv /= currentLevel
+               then litLv
+               else lv

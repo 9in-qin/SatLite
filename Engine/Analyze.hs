@@ -55,6 +55,5 @@ resolution resCl var cl =
         resClWithoutVar = IntMap.delete (getVar var) resCl
         clWithoutVar    = filter (\lit -> litToVar lit /= var) cl
 
-        insertLit :: ResolutionClause -> Lit -> ResolutionClause
         insertLit resCl' lit' =
             IntMap.insert (getVar (litToVar lit')) lit' resCl'

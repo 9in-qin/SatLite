@@ -1,7 +1,6 @@
 module Parser where
 
 import Data.List
-import Data.Maybe
 
 parse :: String -> ([[Int]], (Int, Int))
 parse input = 
