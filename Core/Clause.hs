@@ -4,6 +4,6 @@ import qualified Data.IntMap as IntMap
 
 import Core.Lit
 
-type CID           = Int
-type Clause        = [Lit]
-type Clauses       = IntMap.IntMap Clause
+type CID     = Int
+type Clause  = [Lit]
+type Clauses = IntMap.IntMap Clause
