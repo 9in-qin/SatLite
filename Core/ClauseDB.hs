@@ -1,10 +1,8 @@
 module Core.ClauseDB where
 
-import qualified Data.IntMap as IntMap
-
 import Core.Clause
-import Core.WatchedLits
 import Core.LitsToClauses
+import Core.WatchedLits
 
 type VarCount = Int
 
