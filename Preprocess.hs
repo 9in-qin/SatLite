@@ -20,29 +20,28 @@ preprocess (cls, (numVars, numClauses)) =
               , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] cls'
               , varCount      = numVars
               },
-    SolverState { assignment       = foldl' assignmentConstructor IntMap.empty unitLits'
-                , queue            = enqueueUnitClauses dbClauses Seq.empty
+    SolverState { assignment       = foldl' assignmentConstructor IntMap.empty unitLits
+                , queue            = enqueueUnitClauses unitLits Seq.empty
                 , trail            = foldl' trailPush emptyTrail varAndRsn
                 , varActivity      = IntMap.fromList [(varID, 1.0) | varID <- [0..numVars-1]]
                 , conflictCount    = 0
                 , restartThreshold = 100
                 })
     where
-        dbClauses = IntMap.fromList $ zipWith listToClause [0..] cls'
-        unitLits  = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
-        unitLits' = map snd unitLits
-        unitVars  = map (fmap litToVar) unitLits
-        varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars
         cls'      = nub $ map (map (\x -> x - 2)) $ adjustIndex cls
+        dbClauses = IntMap.fromList $ zipWith listToClause [0..] cls'
+        unitCls   = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
+        unitLits  = map snd unitCls
+        unitVars  = map (fmap litToVar) unitCls
+        varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars
 
 adjustIndex :: [[Int]] -> [[Int]]
-adjustIndex = map step
+adjustIndex = map $ map intToLitIndex
     where
-        step = map intToLit
-        intToLit :: Int -> Int
-        intToLit i
+        intToLitIndex :: Int -> Int
+        intToLitIndex i
             | i > 0 = 2 * i
-            | otherwise = 2 * (-i) + 1
+            | otherwise = 2 * (- i) + 1
 
 assignmentConstructor :: IntMap.IntMap Bool -> Lit -> IntMap.IntMap Bool
 assignmentConstructor currentAssignment lit = IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
@@ -50,8 +49,8 @@ assignmentConstructor currentAssignment lit = IntMap.insert (getVar $ litToVar l
 listToClause :: CID -> [Int] -> (CID, [Lit])
 listToClause cid l = (cid, map Lit l)
 
-enqueueUnitClauses :: Clauses -> BCPqueue -> BCPqueue
-enqueueUnitClauses cls q = q Seq.>< Seq.fromList [ l | [l] <- IntMap.elems cls ]
+enqueueUnitClauses :: [Lit] -> BCPqueue -> BCPqueue
+enqueueUnitClauses lits q = q Seq.>< Seq.fromList lits
 
 watching :: CID -> [Int] -> (CID, (Lit, Lit))
 watching cid [x]     = (cid, (Lit x, Lit x))

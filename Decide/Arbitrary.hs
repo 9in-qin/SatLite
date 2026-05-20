@@ -1,11 +1,9 @@
 module Decide.Arbitrary where
 
-import qualified Data.Map as Map
 import qualified Data.IntMap as IntMap
 
 import Core.Var
 import Core.ClauseDB
-import Core.SolverState
 import Core.Assignment
 
 unAssigned :: VarCount -> Assignment -> Maybe Var
