@@ -17,24 +17,22 @@ backjump db ss learnedCl firstUIP currentLevel =
     (db { clauses     = IntMap.insert newCID learnedCl (clauses db)
         , clauseCount = clauseCount db + 1
         },
-     ss { assignment = updatedAssignment
-        , queue      = enqueue theLiteral Seq.empty
+     ss { assignment = IntMap.insert (getVar firstUIP) (litSign firstUIPLit) asgmtWithoutPoppedVars
+        , queue      = enqueue firstUIPLit Seq.empty
         , trail      = trailPush trailAfterPop (firstUIP, Propagated newCID)
         })
     where
+        newCID                 = clauseCount db
+        asgmt                  = assignment ss
+        tr                     = trail ss
+        levelInfo              = levels tr
         backjumpLevel          = case learnedCl of
                                         [_] -> 0
                                         _   -> foldl' levelChecker 0 learnedCl
         (trailAfterPop,
          poppedVars)           = trailPopToLevel tr backjumpLevel
-        asgmt                  = assignment ss
         asgmtWithoutPoppedVars = foldl' (\acc x -> IntMap.delete (getVar x) acc) asgmt poppedVars
-        updatedAssignment      = IntMap.insert (getVar firstUIP) theValue asgmtWithoutPoppedVars
-        newCID                 = clauseCount db
-        tr                     = trail ss
-        levelInfo              = levels tr
-        theLiteral             = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
-        theValue               = litSign theLiteral
+        firstUIPLit            = head $ filter (\lit -> litToVar lit == firstUIP) learnedCl
 
         levelChecker :: Level -> Lit -> Level
         levelChecker lv lit =
