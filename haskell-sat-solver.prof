@@ -1,28 +1,29 @@
-	Wed May 20 20:31 2026 Time and Allocation Profiling Report  (Final)
+	Wed May 20 22:30 2026 Time and Allocation Profiling Report  (Final)
 
 	   haskell-sat-solver +RTS -p -RTS Test/UUF225.960.100/uuf225-02.cnf
 
-	total time  =       31.44 secs   (31440 ticks @ 1000 us, 1 processor)
-	total alloc = 98,757,942,432 bytes  (excludes profiling overheads)
+	total time  =       31.77 secs   (31769 ticks @ 1000 us, 1 processor)
+	total alloc = 98,761,344,696 bytes  (excludes profiling overheads)
 
 COST CENTRE         MODULE             SRC                                   %time %alloc
 
-checkClause         Engine.Propagate   Engine/Propagate.hs:(45,1)-(75,37)     30.3   36.7
+checkClause         Engine.Propagate   Engine/Propagate.hs:(45,1)-(75,37)     31.1   36.7
 processInfluenced   Engine.Propagate   Engine/Propagate.hs:(36,1)-(42,45)     10.7    2.2
-trailPush           Core.Trail         Core/Trail.hs:(41,1)-(49,75)            7.3   17.8
-trailPopToLevel     Core.Trail         Core/Trail.hs:(52,1)-(63,75)            6.4   10.1
-findNewWatch        Engine.Propagate   Engine/Propagate.hs:(78,1)-(87,36)      6.1    0.3
-exactlyOne          Engine.Analyze     Engine/Analyze.hs:(44,1)-(49,54)        5.8    2.3
+trailPush           Core.Trail         Core/Trail.hs:(41,1)-(49,75)            7.0   17.8
+trailPopToLevel     Core.Trail         Core/Trail.hs:(52,1)-(63,75)            6.3   10.1
+exactlyOne          Engine.Analyze     Engine/Analyze.hs:(44,1)-(49,54)        6.0    2.3
 updateLitsToClauses Core.LitsToClauses Core/LitsToClauses.hs:(10,1)-(11,49)    5.7   10.8
 mostActiveVar       Decide.VSIDS       Decide/VSIDS.hs:(10,1)-(21,33)          4.9    0.1
-backjump            Engine.Backjump    Engine/Backjump.hs:(16,1)-(44,22)       3.3    5.0
+findNewWatch        Engine.Propagate   Engine/Propagate.hs:(78,1)-(87,36)      4.1    0.3
+backjump            Engine.Backjump    Engine/Backjump.hs:(16,1)-(42,22)       3.5    5.0
+analyze             Engine.Analyze     Engine/Analyze.hs:(27,1)-(41,36)        3.0    0.7
 literalType         Core.Assignment    Core/Assignment.hs:(12,1)-(17,33)       3.0    0.0
-analyze             Engine.Analyze     Engine/Analyze.hs:(27,1)-(41,36)        2.8    0.7
+processWatched      Engine.Propagate   Engine/Propagate.hs:(30,1)-(33,53)      2.5    0.5
 resolution          Engine.Analyze     Engine/Analyze.hs:(52,1)-(59,62)        2.4    3.9
-processWatched      Engine.Propagate   Engine/Propagate.hs:(30,1)-(33,53)      2.2    0.5
-propagate           Engine.Propagate   Engine/Propagate.hs:(21,1)-(27,66)      1.5    3.5
-enqueue             Core.Queue         Core/Queue.hs:(10,1)-(11,14)            1.1    1.7
-updateActivity      Decide.VarActivity Decide/VarActivity.hs:(22,1)-(26,68)    1.0    2.1
+==                  Core.Lit           Core/Lit.hs:7:33-34                     1.8    0.0
+propagate           Engine.Propagate   Engine/Propagate.hs:(21,1)-(27,66)      1.7    3.5
+updateActivity      Decide.VarActivity Decide/VarActivity.hs:(22,1)-(26,68)    1.1    2.1
+enqueue             Core.Queue         Core/Queue.hs:(10,1)-(11,14)            0.8    1.7
 
 
                                                                                                            individual      inherited
@@ -37,12 +38,12 @@ MAIN                       MAIN                    <built-in>                   
   ==                       Core.Lit                Core/Lit.hs:7:33-34                  426           1    0.0    0.0     0.0    0.0
  CAF                       Core.Trail              <entire-module>                      379           0    0.0    0.0     0.0    0.0
   emptyTrail               Core.Trail              Core/Trail.hs:(22,1)-(27,5)          444           1    0.0    0.0     0.0    0.0
- CAF                       Decide.VarActivity      <entire-module>                      374           0    0.0    0.0     0.0    0.0
+ CAF                       Decide.VarActivity      <entire-module>                      373           0    0.0    0.0     0.0    0.0
   updateActivity           Decide.VarActivity      Decide/VarActivity.hs:(22,1)-(26,68) 494           1    0.0    0.0     0.0    0.0
- CAF                       Decide.VSIDS            <entire-module>                      373           0    0.0    0.0     0.0    0.0
+ CAF                       Decide.VSIDS            <entire-module>                      372           0    0.0    0.0     0.0    0.0
   mostActiveVar            Decide.VSIDS            Decide/VSIDS.hs:(10,1)-(21,33)       403           0    0.0    0.0     0.0    0.0
  CAF                       Parser                  <entire-module>                      366           0    0.0    0.0     0.0    0.0
-  parse                    Parser                  Parser.hs:(6,1)-(31,54)              399           0    0.0    0.0     0.0    0.0
+  parse                    Parser                  Parser.hs:(6,1)-(49,55)              397           0    0.0    0.0     0.0    0.0
  CAF                       Preprocess              <entire-module>                      365           0    0.0    0.0     0.0    0.0
   adjustIndex              Preprocess              Preprocess.hs:(39,1)-(44,39)         395           1    0.0    0.0     0.0    0.0
  CAF                       Engine.CDCL             <entire-module>                      363           0    0.0    0.0     0.0    0.0
@@ -61,43 +62,43 @@ MAIN                       MAIN                    <built-in>                   
  CAF                       Text.Printf             <entire-module>                      239           0    0.0    0.0     0.0    0.0
  main                      Main                    app/Main.hs:(16,1)-(30,47)           385           0    0.0    0.0   100.0  100.0
   cdcl                     Engine.CDCL             Engine/CDCL.hs:(22,1)-(32,45)        391      999326    0.2    0.1   100.0  100.0
-   propagate               Engine.Propagate        Engine/Propagate.hs:(21,1)-(27,66)   392    16027975    1.5    3.5    70.2   73.0
+   propagate               Engine.Propagate        Engine/Propagate.hs:(21,1)-(27,66)   392    16027975    1.7    3.5    69.8   73.0
     queue                  Core.SolverState        Core/SolverState.hs:9:34-38          393    16027975    0.1    0.0     0.1    0.0
-    negateLit              Core.Lit                Core/Lit.hs:19:1-35                  407    15423408    0.3    0.2     0.3    0.2
-    processWatched         Engine.Propagate        Engine/Propagate.hs:(30,1)-(33,53)   409    15423408    2.2    0.5    68.3   69.2
+    negateLit              Core.Lit                Core/Lit.hs:19:1-35                  407    15423408    0.2    0.2     0.2    0.2
+    processWatched         Engine.Propagate        Engine/Propagate.hs:(30,1)-(33,53)   409    15423408    2.5    0.5    67.9   69.2
      getLit                Core.Lit                Core/Lit.hs:10:1-18                  410    15423408    0.0    0.0     0.0    0.0
      litsToClauses         Core.ClauseDB           Core/ClauseDB.hs:12:28-40            411    15423408    0.1    0.0     0.1    0.0
-     processInfluenced     Engine.Propagate        Engine/Propagate.hs:(36,1)-(42,45)   413    15400645   10.7    2.2    66.0   68.7
-      checkClause          Engine.Propagate        Engine/Propagate.hs:(45,1)-(75,37)   414    51813037   30.3   36.7    55.2   66.6
-       assignment          Core.SolverState        Core/SolverState.hs:8:34-43          421    70869334    0.7    0.0     0.7    0.0
+     processInfluenced     Engine.Propagate        Engine/Propagate.hs:(36,1)-(42,45)   413    15400645   10.7    2.2    65.3   68.7
+      checkClause          Engine.Propagate        Engine/Propagate.hs:(45,1)-(75,37)   414    51813037   31.1   36.7    54.4   66.6
+       assignment          Core.SolverState        Core/SolverState.hs:8:34-43          421    70869334    0.4    0.0     0.4    0.0
        getVar              Core.Var                Core/Var.hs:6:1-18                   417    51813037    0.0    0.0     0.0    0.0
        litToVar            Core.Lit                Core/Lit.hs:16:1-41                  418    51813037    0.0    0.0     0.0    0.0
        watchedLits         Core.ClauseDB           Core/ClauseDB.hs:11:28-38            415    51813037    0.2    0.0     0.2    0.0
-       findNewWatch        Engine.Propagate        Engine/Propagate.hs:(78,1)-(87,36)   424    39708605    6.1    0.3     9.7    0.3
+       findNewWatch        Engine.Propagate        Engine/Propagate.hs:(78,1)-(87,36)   424    39708605    4.1    0.3     8.9    0.3
         literalType        Core.Assignment         Core/Assignment.hs:(12,1)-(17,33)    428    39708605    3.0    0.0     3.0    0.0
          getVar            Core.Var                Core/Var.hs:6:1-18                   430    39708605    0.0    0.0     0.0    0.0
          litToVar          Core.Lit                Core/Lit.hs:16:1-41                  429    39708605    0.0    0.0     0.0    0.0
          ifLiteralTrue     Core.Lit                Core/Lit.hs:25:1-65                  435    22477626    0.0    0.0     0.0    0.0
-        ==                 Core.Lit                Core/Lit.hs:7:33-34                  427           0    0.6    0.0     0.6    0.0
+        ==                 Core.Lit                Core/Lit.hs:7:33-34                  427           0    1.8    0.0     1.8    0.0
        getLit              Core.Lit                Core/Lit.hs:10:1-18                  431    20257548    0.0    0.0     0.0    0.0
        litsToClauses       Core.ClauseDB           Core/ClauseDB.hs:12:28-40            432    20257548    0.0    0.0     0.0    0.0
        updateLitsToClauses Core.LitsToClauses      Core/LitsToClauses.hs:(10,1)-(11,49) 433    20257548    5.7   10.8     5.7   10.8
        trail               Core.SolverState        Core/SolverState.hs:10:34-38         441    19056297    0.0    0.0     0.0    0.0
-       trailPush           Core.Trail              Core/Trail.hs:(41,1)-(49,75)         446    19056297    6.7   16.9     6.7   16.9
+       trailPush           Core.Trail              Core/Trail.hs:(41,1)-(49,75)         446    19056297    6.4   16.9     6.4   16.9
         getVar             Core.Var                Core/Var.hs:6:1-18                   467    19056269    0.0    0.0     0.0    0.0
         reasons            Core.Trail              Core/Trail.hs:17:22-28               466    19056269    0.0    0.0     0.0    0.0
         lvBasedTrails      Core.Trail              Core/Trail.hs:16:22-34               463    19055457    0.0    0.0     0.0    0.0
         levels             Core.Trail              Core/Trail.hs:18:22-27               486    19054916    0.0    0.0     0.0    0.0
         currentLevel       Core.Trail              Core/Trail.hs:15:22-33               489      717297    0.0    0.0     0.0    0.0
-       enqueue             Core.Queue              Core/Queue.hs:(10,1)-(11,14)         437    18745164    1.0    1.7     1.0    1.7
+       enqueue             Core.Queue              Core/Queue.hs:(10,1)-(11,14)         437    18745164    0.8    1.7     0.8    1.7
        queue               Core.SolverState        Core/SolverState.hs:9:34-38          436    18745164    0.0    0.0     0.0    0.0
        ifLiteralTrue       Core.Lit                Core/Lit.hs:25:1-65                  434    12796342    0.0    0.0     0.0    0.0
        litSign             Core.Lit                Core/Lit.hs:22:1-24                  438     8133260    0.2    0.0     0.2    0.0
-       /=                  Core.Lit                Core/Lit.hs:7:33-34                  420           0    0.6    0.0     0.6    0.0
-      clauses              Core.ClauseDB           Core/ClauseDB.hs:9:28-34             425    39708605    0.1    0.0     0.1    0.0
+       /=                  Core.Lit                Core/Lit.hs:7:33-34                  420           0    0.8    0.0     0.8    0.0
+      clauses              Core.ClauseDB           Core/ClauseDB.hs:9:28-34             425    39708605    0.2    0.0     0.2    0.0
    assignment              Core.SolverState        Core/SolverState.hs:8:34-43          402      604567    0.0    0.0     0.0    0.0
    mostActiveVar           Decide.VSIDS            Decide/VSIDS.hs:(10,1)-(21,33)       401      604567    4.9    0.1     4.9    0.1
-   processDecide           Engine.CDCL             Engine/CDCL.hs:(52,1)-(56,8)         404      604567    0.2    0.2     0.7    0.7
+   processDecide           Engine.CDCL             Engine/CDCL.hs:(52,1)-(56,8)         404      604567    0.2    0.2     0.6    0.7
     assignment             Core.SolverState        Core/SolverState.hs:8:34-43          423      604567    0.0    0.0     0.0    0.0
     enqueue                Core.Queue              Core/Queue.hs:(10,1)-(11,14)         406      604567    0.0    0.0     0.0    0.0
     getVar                 Core.Var                Core/Var.hs:6:1-18                   422      604567    0.0    0.0     0.0    0.0
@@ -106,7 +107,7 @@ MAIN                       MAIN                    <built-in>                   
      lvBasedTrails         Core.Trail              Core/Trail.hs:16:22-34               507      603898    0.0    0.0     0.0    0.0
     queue                  Core.SolverState        Core/SolverState.hs:9:34-38          405      604567    0.0    0.0     0.0    0.0
     trail                  Core.SolverState        Core/SolverState.hs:10:34-38         443      604567    0.0    0.0     0.0    0.0
-    trailPush              Core.Trail              Core/Trail.hs:(41,1)-(49,75)         445      604567    0.3    0.5     0.3    0.5
+    trailPush              Core.Trail              Core/Trail.hs:(41,1)-(49,75)         445      604567    0.4    0.5     0.4    0.5
      getVar                Core.Var                Core/Var.hs:6:1-18                   469      604567    0.0    0.0     0.0    0.0
      reasons               Core.Trail              Core/Trail.hs:17:22-28               468      604567    0.0    0.0     0.0    0.0
      levels                Core.Trail              Core/Trail.hs:18:22-27               487      604518    0.0    0.0     0.0    0.0
@@ -116,16 +117,16 @@ MAIN                       MAIN                    <built-in>                   
    varActivity             Core.SolverState        Core/SolverState.hs:11:34-44         400      604567    0.0    0.0     0.0    0.0
    currentLevel            Core.Trail              Core/Trail.hs:15:22-33               439      394759    0.0    0.0     0.0    0.0
    trail                   Core.SolverState        Core/SolverState.hs:10:34-38         440      394759    0.0    0.0     0.0    0.0
-   processConflict         Engine.CDCL             Engine/CDCL.hs:(35,1)-(49,30)        448      394758    0.4    0.4    24.0   26.1
-    analyze                Engine.Analyze          Engine/Analyze.hs:(27,1)-(41,36)     457    18019213    2.8    0.7    11.9    7.3
+   processConflict         Engine.CDCL             Engine/CDCL.hs:(35,1)-(49,30)        448      394758    0.4    0.4    24.4   26.1
+    analyze                Engine.Analyze          Engine/Analyze.hs:(27,1)-(41,36)     457    18019213    3.0    0.7    12.2    7.3
      getVar                Core.Var                Core/Var.hs:6:1-18                   464    23939217    0.0    0.0     0.0    0.0
-     exactlyOne            Engine.Analyze          Engine/Analyze.hs:(44,1)-(49,54)     458    18019213    5.8    2.3     5.8    2.3
+     exactlyOne            Engine.Analyze          Engine/Analyze.hs:(44,1)-(49,54)     458    18019213    6.0    2.3     6.0    2.3
       getVar               Core.Var                Core/Var.hs:6:1-18                   459   128852859    0.0    0.0     0.0    0.0
-     resolution            Engine.Analyze          Engine/Analyze.hs:(52,1)-(59,62)     471     6314762    2.4    3.9     3.4    4.3
+     resolution            Engine.Analyze          Engine/Analyze.hs:(52,1)-(59,62)     471     6314762    2.4    3.9     3.2    4.3
       litToVar             Core.Lit                Core/Lit.hs:16:1-41                  475    37370552    0.5    0.4     0.5    0.4
       getVar               Core.Var                Core/Var.hs:6:1-18                   472    21842657    0.0    0.0     0.0    0.0
-      /=                   Core.Var                Core/Var.hs:3:33-34                  474           0    0.5    0.0     0.5    0.0
-    backjump               Engine.Backjump         Engine/Backjump.hs:(16,1)-(44,22)    450      394758    3.3    5.0    10.2   15.5
+      /=                   Core.Var                Core/Var.hs:3:33-34                  474           0    0.4    0.0     0.4    0.0
+    backjump               Engine.Backjump         Engine/Backjump.hs:(16,1)-(42,22)    450      394758    3.5    5.0    10.1   15.5
      getVar                Core.Var                Core/Var.hs:6:1-18                   480    25538924    0.0    0.0     0.0    0.0
      litToVar              Core.Lit                Core/Lit.hs:16:1-41                  479     7623588    0.1    0.0     0.1    0.0
      clauseCount           Core.ClauseDB           Core/ClauseDB.hs:10:28-38            492      789515    0.0    0.0     0.0    0.0
@@ -133,13 +134,13 @@ MAIN                       MAIN                    <built-in>                   
      assignment            Core.SolverState        Core/SolverState.hs:8:34-43          482      394728    0.0    0.0     0.0    0.0
      enqueue               Core.Queue              Core/Queue.hs:(10,1)-(11,14)         452      394728    0.0    0.0     0.0    0.0
      trail                 Core.SolverState        Core/SolverState.hs:10:34-38         484      394728    0.0    0.0     0.0    0.0
-     trailPopToLevel       Core.Trail              Core/Trail.hs:(52,1)-(63,75)         481      394728    6.4   10.1     6.4   10.1
+     trailPopToLevel       Core.Trail              Core/Trail.hs:(52,1)-(63,75)         481      394728    6.3   10.1     6.3   10.1
       getVar               Core.Var                Core/Var.hs:6:1-18                   504    40104029    0.0    0.0     0.0    0.0
       currentLevel         Core.Trail              Core/Trail.hs:15:22-33               483      394728    0.0    0.0     0.0    0.0
       lvBasedTrails        Core.Trail              Core/Trail.hs:16:22-34               490      394728    0.0    0.0     0.0    0.0
       reasons              Core.Trail              Core/Trail.hs:17:22-28               503      394727    0.0    0.0     0.0    0.0
       levels               Core.Trail              Core/Trail.hs:18:22-27               506      394697    0.0    0.0     0.0    0.0
-     trailPush             Core.Trail              Core/Trail.hs:(41,1)-(49,75)         500      394728    0.3    0.3     0.3    0.3
+     trailPush             Core.Trail              Core/Trail.hs:(41,1)-(49,75)         500      394728    0.2    0.3     0.2    0.3
       getVar               Core.Var                Core/Var.hs:6:1-18                   502      394727    0.0    0.0     0.0    0.0
       reasons              Core.Trail              Core/Trail.hs:17:22-28               501      394727    0.0    0.0     0.0    0.0
       levels               Core.Trail              Core/Trail.hs:18:22-27               505      394697    0.0    0.0     0.0    0.0
@@ -147,7 +148,7 @@ MAIN                       MAIN                    <built-in>                   
       currentLevel         Core.Trail              Core/Trail.hs:15:22-33               508      136963    0.0    0.0     0.0    0.0
      levels                Core.Trail              Core/Trail.hs:18:22-27               485      394727    0.0    0.0     0.0    0.0
      litSign               Core.Lit                Core/Lit.hs:22:1-24                  499      337655    0.0    0.0     0.0    0.0
-     ==                    Core.Var                Core/Var.hs:3:33-34                  478           0    0.1    0.0     0.1    0.0
+     ==                    Core.Var                Core/Var.hs:3:33-34                  478           0    0.0    0.0     0.0    0.0
     clauses                Core.ClauseDB           Core/ClauseDB.hs:9:28-34             470      394758    0.0    0.0     0.0    0.0
     conflictCount          Core.SolverState        Core/SolverState.hs:12:34-46         449      394758    0.0    0.0     0.0    0.0
     extractInfo            Engine.Analyze          Engine/Analyze.hs:(18,1)-(24,29)     453      394758    0.2    0.3     0.3    0.3
@@ -159,8 +160,8 @@ MAIN                       MAIN                    <built-in>                   
      reasons               Core.Trail              Core/Trail.hs:17:22-28               465      394758    0.0    0.0     0.0    0.0
      trail                 Core.SolverState        Core/SolverState.hs:10:34-38         456      394758    0.0    0.0     0.0    0.0
     restartThreshold       Core.SolverState        Core/SolverState.hs:13:34-49         451      394758    0.0    0.0     0.0    0.0
-    conflictBasedUpdate    Decide.VarActivity      Decide/VarActivity.hs:(13,1)-(19,54) 493      394756    0.0    0.1     1.1    2.3
-     updateActivity        Decide.VarActivity      Decide/VarActivity.hs:(22,1)-(26,68) 495           0    1.0    2.1     1.1    2.2
+    conflictBasedUpdate    Decide.VarActivity      Decide/VarActivity.hs:(13,1)-(19,54) 493      394756    0.0    0.1     1.2    2.3
+     updateActivity        Decide.VarActivity      Decide/VarActivity.hs:(22,1)-(26,68) 495           0    1.1    2.1     1.2    2.2
       getVar               Core.Var                Core/Var.hs:6:1-18                   497     5091716    0.0    0.0     0.0    0.0
       litToVar             Core.Lit                Core/Lit.hs:16:1-41                  498     5091716    0.1    0.1     0.1    0.1
     varActivity            Core.SolverState        Core/SolverState.hs:11:34-44         496      394756    0.0    0.0     0.0    0.0
@@ -178,9 +179,9 @@ MAIN                       MAIN                    <built-in>                   
       getVar               Core.Var                Core/Var.hs:6:1-18                   520           1    0.0    0.0     0.0    0.0
       levels               Core.Trail              Core/Trail.hs:18:22-27               522           1    0.0    0.0     0.0    0.0
       reasons              Core.Trail              Core/Trail.hs:17:22-28               519           1    0.0    0.0     0.0    0.0
-  parse                    Parser                  Parser.hs:(6,1)-(31,54)              389           1    0.0    0.0     0.0    0.0
+  parse                    Parser                  Parser.hs:(6,1)-(49,55)              389           1    0.0    0.0     0.0    0.0
   preprocess               Preprocess              Preprocess.hs:(16,1)-(36,63)         390           1    0.0    0.0     0.0    0.0
-   listToClause            Preprocess              Preprocess.hs:50:1-37                397         960    0.0    0.0     0.0    0.0
+   listToClause            Preprocess              Preprocess.hs:50:1-37                398         960    0.0    0.0     0.0    0.0
    watchedBy               Preprocess              Preprocess.hs:(60,1)-(61,48)         412         960    0.0    0.0     0.0    0.0
    watching                Preprocess              Preprocess.hs:(56,1)-(57,44)         416         960    0.0    0.0     0.0    0.0
    enqueueUnitClauses      Preprocess              Preprocess.hs:53:1-54                394           1    0.0    0.0     0.0    0.0
