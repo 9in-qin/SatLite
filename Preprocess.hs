@@ -15,7 +15,7 @@ import Core.Queue
 preprocess :: ([[Int]], (Int, Int)) -> (ClauseDB, SolverState)
 preprocess (cls, (numVars, numClauses)) =
     (ClauseDB { clauses       = dbClauses
-              , clauseCount   = length dbClauses
+              , clauseCount   = length vectorCls
               , watchedLits   = IntMap.fromList $ zipWith watching [0..] formalCls
               , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] formalCls
               , varCount      = numVars
@@ -28,11 +28,13 @@ preprocess (cls, (numVars, numClauses)) =
                 , restartThreshold = 100
                 })
     where
-        formalCls = map (map (Lit . intToLitIndex)) cls
-        dbClauses = Clauses { fixedClauses = Vector.fromList formalCls
+        formalCls = map (map intToLitIndex) cls
+        clsInLit  = map (map Lit) formalCls
+        vectorCls = Vector.fromList clsInLit
+        dbClauses = Clauses { fixedClauses = vectorCls
                             , learnedClauses = IntMap.empty
                             }
-        unitCls   = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
+        unitCls   = [ (cid, l) | (cid, [l]) <- zip [0..] clsInLit ]
         unitLits  = map snd unitCls
         unitVars  = map (fmap litToVar) unitCls
         varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars

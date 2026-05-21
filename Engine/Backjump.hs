@@ -14,7 +14,7 @@ import Core.SolverState
 
 backjump :: ClauseDB -> SolverState -> Clause -> Var -> Level -> (ClauseDB, SolverState)
 backjump db ss learnedCl firstUIP currentLevel =
-    (db { clauses     = IntMap.insert newCID learnedCl (clauses db)
+    (db { clauses     = insertClause newCID learnedCl (clauses db)
         , clauseCount = clauseCount db + 1
         },
      ss { assignment = assignLiteral asgmtWithoutPoppedVars firstUIPLit

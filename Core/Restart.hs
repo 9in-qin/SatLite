@@ -1,9 +1,9 @@
 module Core.Restart where
 
-import qualified Data.IntMap as IntMap
 import Data.List
 
 import Core.Assignment
+import Core.Clause
 import Core.ClauseDB
 import Core.Queue
 import Core.SolverState
@@ -21,7 +21,7 @@ restart db ss =
     where
         cls       = clauses db
         threshold = restartThreshold ss
-        unitCls   = [ (cid, l) | (cid, [l]) <- IntMap.toList cls ]
+        unitCls   = [ (cid, l) | (cid, [l]) <- allClausesWithCID cls ]
         unitLits  = map snd unitCls
         unitVars  = map (fmap litToVar) unitCls
         varAndRsn = map (\(x, y) -> (y, Propagated x)) unitVars

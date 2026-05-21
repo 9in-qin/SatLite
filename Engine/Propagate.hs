@@ -38,7 +38,7 @@ processInfluenced lit cids db ss =
     where
         step acc@(_, _, DoesConflict _) _ = acc
         step (db0, ss0, NoConflict) cid =
-            let cl = clauses db0 IntMap.! cid
+            let cl = lookupClause cid (clauses db0)
             in checkClause lit cid cl db0 ss0
 
 checkClause :: Lit -> CID -> Clause -> ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
