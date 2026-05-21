@@ -1,5 +1,6 @@
 module Preprocess where
 
+import qualified Data.Vector as Vector
 import qualified Data.IntMap as IntMap
 import Data.List
 
@@ -27,8 +28,10 @@ preprocess (cls, (numVars, numClauses)) =
                 , restartThreshold = 100
                 })
     where
-        formalCls = map (map intToLitIndex) cls
-        dbClauses = IntMap.fromList $ zipWith (\cid l -> (cid, map Lit l)) [0..] formalCls
+        formalCls = map (map (Lit . intToLitIndex)) cls
+        dbClauses = Clauses { fixedClauses = Vector.fromList formalCls
+                            , learnedClauses = IntMap.empty
+                            }
         unitCls   = [ (cid, l) | (cid, [l]) <- IntMap.toList dbClauses ]
         unitLits  = map snd unitCls
         unitVars  = map (fmap litToVar) unitCls
