@@ -1,19 +1,19 @@
 module Core.Restart where
 
 import qualified Data.IntMap as IntMap
-import qualified Data.Sequence as Seq
 import Data.List
 
+import Core.Assignment
 import Core.ClauseDB
+import Core.Queue
 import Core.SolverState
-import Preprocess
 import Core.Trail
 import Core.Lit
 
 restart :: ClauseDB -> SolverState -> SolverState
 restart db ss =
-    ss { assignment       = foldl' assignmentConstructor IntMap.empty unitLits
-       , queue            = enqueueUnitClauses unitLits Seq.empty
+    ss { assignment       = foldl' assignLiteral emptyAssignment unitLits
+       , queue            = enqueueUnitClauses unitLits emptyQueue
        , trail            = foldl' trailPush emptyTrail varAndRsn
        , conflictCount    = 0
        , restartThreshold = floor (fromIntegral threshold * 1.25)

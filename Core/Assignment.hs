@@ -8,6 +8,13 @@ import Core.Var
 type Assignment = IntMap.IntMap Bool
 data LitType    = LitTrue | LitFalse | LitUnassigned
 
+emptyAssignment :: Assignment
+emptyAssignment = IntMap.empty
+
+assignLiteral :: Assignment -> Lit -> Assignment
+assignLiteral currentAssignment lit =
+    IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
+
 literalType :: Assignment -> Lit -> LitType
 literalType asgmt lit =
     case IntMap.lookup (getVar (litToVar lit)) asgmt of

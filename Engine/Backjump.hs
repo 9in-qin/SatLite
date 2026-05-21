@@ -1,9 +1,9 @@
 module Engine.Backjump where
 
 import qualified Data.IntMap as IntMap
-import qualified Data.Sequence as Seq
 import Data.List
 
+import Core.Assignment
 import Core.Var
 import Core.Lit
 import Core.Clause
@@ -17,8 +17,8 @@ backjump db ss learnedCl firstUIP currentLevel =
     (db { clauses     = IntMap.insert newCID learnedCl (clauses db)
         , clauseCount = clauseCount db + 1
         },
-     ss { assignment = IntMap.insert (getVar firstUIP) (litSign firstUIPLit) asgmtWithoutPoppedVars
-        , queue      = enqueue firstUIPLit Seq.empty
+     ss { assignment = assignLiteral asgmtWithoutPoppedVars firstUIPLit
+        , queue      = enqueue firstUIPLit emptyQueue
         , trail      = trailPush trailAfterPop (firstUIP, Propagated newCID)
         })
     where
