@@ -1,16 +1,13 @@
 module Main where
 
-import qualified Data.Map as Map
-import System.Environment (getArgs)
-import System.IO
+import System.Environment
 import System.CPUTime
 import Text.Printf
+import Control.Exception
 
 import Parser
 import Preprocess
 import Engine.CDCL as CDCL
-import Engine.DPLL as DPLL
-import Engine.Propagate
 
 main :: IO ()
 main = do
@@ -19,12 +16,17 @@ main = do
         [file] -> do
             input <- readFile file
             start <- getCPUTime
-            let
-                (db, ss) = preprocess $ parse input
-                result = CDCL.cdcl db ss
-            print result
-            end <- getCPUTime
-            let
-                diff = fromIntegral (end - start) / 10^12
-            printf "CPU time: %0.3f sec\n" (diff :: Double)
-        _      -> putStrLn "CNF file required."
+            case parse input of
+                Nothing -> do
+                    end <- getCPUTime
+                    putStrLn "UNSAT"
+                    let cpuTime = fromIntegral (end - start) / 10 ^ 12
+                    printf "CPU time: %0.3f sec\n" (cpuTime :: Double)
+                Just parsingResult -> do
+                    let (db, ss) = preprocess parsingResult
+                    result <- evaluate (CDCL.cdcl db ss)
+                    end    <- getCPUTime
+                    print result
+                    let cpuTime = fromIntegral (end - start) / 10 ^ 12
+                    printf "CPU time: %0.3f sec\n" (cpuTime :: Double)
+        _ -> putStrLn "CNF file required"

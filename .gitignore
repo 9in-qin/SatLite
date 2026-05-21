@@ -2,3 +2,6 @@ Test/
 *.txt
 .DS_Store
 dist-newstyle/
+MainOld.hs
+Test.hs
+Test2.hs

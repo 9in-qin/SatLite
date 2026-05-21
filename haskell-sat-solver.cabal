@@ -86,7 +86,5 @@ executable haskell-sat-solver
         Engine.DPLL
         Engine.Propagate
 
-        MainOld
         Parser
         Preprocess
-        Test
