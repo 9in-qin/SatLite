@@ -18,7 +18,7 @@ extractInfo :: (ClauseDB, SolverState, CID) -> (ResolutionClause, TrailElements,
 extractInfo (db, ss, cid) =
     (resCl, trailEles, reasons tr)
     where
-        conflictCl = clauses db IntMap.! cid
+        conflictCl = lookupClause cid (clauses db)
         resCl      = IntMap.fromList $ map (\lit -> (getVar (litToVar lit), lit)) conflictCl
         trailEles  = currentLevelTrail tr
         tr         = trail ss
@@ -32,7 +32,7 @@ analyze (resCl, trEles, rsns) cls =
                 Just lit ->
                     case rsns IntMap.! getVar workingVar of
                         Propagated cid ->
-                            let resolvedCl = resolution resCl workingVar (cls IntMap.! cid)
+                            let resolvedCl = resolution resCl workingVar (lookupClause cid cls)
                             in analyze (resolvedCl, remainingTrail, rsns) cls
                         Decided -> error "Should never reach this stage."
                 Nothing -> analyze (resCl, remainingTrail, rsns) cls
