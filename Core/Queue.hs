@@ -9,6 +9,7 @@ type BCPqueue = Seq.Seq Lit
 emptyQueue :: BCPqueue
 emptyQueue = Seq.empty
 
+{-# INLINE enqueue #-}
 enqueue :: Lit -> BCPqueue -> BCPqueue
 enqueue l q =
     q Seq.|> l

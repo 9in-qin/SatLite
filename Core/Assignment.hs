@@ -15,6 +15,7 @@ assignLiteral :: Assignment -> Lit -> Assignment
 assignLiteral currentAssignment lit =
     IntMap.insert (getVar $ litToVar lit) (litSign lit) currentAssignment
 
+{-# INLINE literalType #-}
 literalType :: Assignment -> Lit -> LitType
 literalType asgmt lit =
     case IntMap.lookup (getVar (litToVar lit)) asgmt of

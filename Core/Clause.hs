@@ -20,6 +20,7 @@ emptyClauses =
             , learnedClauses = IntMap.empty
             }
 
+{-# INLINE fixedClausesCount #-}
 fixedClausesCount :: Clauses -> Int
 fixedClausesCount =
     Vector.length . fixedClauses
@@ -36,6 +37,7 @@ insertClause :: CID -> Clause -> Clauses -> Clauses
 insertClause cid cl cls =
     cls { learnedClauses = IntMap.insert cid cl (learnedClauses cls) }
 
+{-# INLINE lookupClause #-}
 lookupClause :: CID -> Clauses -> Clause
 lookupClause cid cls
     | cid < fixedClausesCount cls =
