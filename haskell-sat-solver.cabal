@@ -84,7 +84,6 @@ executable haskell-sat-solver
         Engine.Analyze
         Engine.Backjump
         Engine.CDCL
-        Engine.DPLL
         Engine.Propagate
 
         Parser
