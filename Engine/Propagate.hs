@@ -81,7 +81,9 @@ findNewWatch asgmt cl oldWatch otherWatch =
     where
         step [] = Nothing
         step (lit:lits)
-            | lit == oldWatch || lit == otherWatch = step lits
-            | otherwise = case literalType asgmt lit of
-                LitFalse -> step lits
-                _        -> Just lit
+            | lit == oldWatch || lit == otherWatch =
+                step lits
+            | otherwise =
+                case literalType asgmt lit of
+                    LitFalse -> step lits
+                    _        -> Just lit
