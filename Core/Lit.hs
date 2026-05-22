@@ -4,7 +4,7 @@ import Data.Bits
 
 import Core.Var
 
-newtype Lit = Lit Int deriving (Eq, Ord, Show)
+newtype Lit = Lit Int deriving (Eq, Ord)
 
 {-# INLINE getLit #-}
 getLit :: Lit -> Int

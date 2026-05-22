@@ -16,7 +16,7 @@ data Trail = Trail { currentLevel  :: Level
                    , lvBasedTrails :: [LvBasedTrail]
                    , reasons       :: Reasons
                    , levels        :: Levels
-                   } deriving (Show)
+                   }
 
 emptyTrail :: Trail
 emptyTrail =

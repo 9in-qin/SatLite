@@ -12,7 +12,7 @@ type LearnedClauses = IntMap.IntMap Clause
 
 data Clauses = Clauses { fixedClauses   :: FixedClauses
                        , learnedClauses :: LearnedClauses
-                       } deriving Show
+                       }
 
 emptyClauses :: Clauses
 emptyClauses =

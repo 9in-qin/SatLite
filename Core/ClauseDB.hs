@@ -11,4 +11,4 @@ data ClauseDB = ClauseDB { clauses       :: Clauses
                          , watchedLits   :: WatchedLits
                          , litsToClauses :: LitsToClauses
                          , varCount      :: VarCount
-                         } deriving (Show)
+                         }

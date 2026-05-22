@@ -1,6 +1,6 @@
 module Core.Var where
 
-newtype Var = Var Int deriving (Eq, Ord, Show)
+newtype Var = Var Int deriving (Eq, Ord)
 
 {-# INLINE getVar #-}
 getVar :: Var -> Int

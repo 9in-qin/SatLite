@@ -16,7 +16,7 @@ import Engine.Analyze
 import Engine.Backjump
 import Engine.Propagate
 
-data Result = UNSAT | SAT (ClauseDB, SolverState) deriving (Show)
+data Result = UNSAT | SAT deriving (Show)
 
 cdcl :: ClauseDB -> SolverState -> Result
 cdcl db ss =
@@ -27,7 +27,7 @@ cdcl db ss =
             lv -> let (newDB, newSS) = processConflict lv cid db' ss'
                   in cdcl newDB newSS
         (db', ss', NoConflict) -> case mostActiveVar (assignment ss') (varActivity ss') of
-            Nothing      -> SAT (db', ss')
+            Nothing      -> SAT
             Just nextVar -> let newSS = processDecide ss' nextVar
                             in cdcl db' newSS
 

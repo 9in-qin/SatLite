@@ -15,7 +15,7 @@ import Core.SolverState
 import Core.Trail
 import Core.Var
 
-data IfConflict = NoConflict | DoesConflict CID deriving (Show)
+data IfConflict = NoConflict | DoesConflict CID
 
 propagate :: ClauseDB -> SolverState -> (ClauseDB, SolverState, IfConflict)
 propagate db ss =

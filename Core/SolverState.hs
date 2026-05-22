@@ -11,4 +11,4 @@ data SolverState = SolverState { assignment       :: Assignment
                                , varActivity      :: VarActivity
                                , conflictCount    :: Int
                                , restartThreshold :: Int
-                               } deriving (Show)
+                               }
