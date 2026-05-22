@@ -41,12 +41,17 @@ analyze (resCl, trEles, rsns) cls =
         remainingTrail = tail trEles
 
 exactlyOne :: ResolutionClause -> CurrentLevelVars -> Maybe Var
-exactlyOne resCl currLvVars =
-    case filter inResCl currLvVars of
-        [x] -> Just x
-        _   -> Nothing
+exactlyOne resCl = find Nothing
     where
-        inResCl var = IntMap.member (getVar var) resCl
+        find acc [] = acc
+        find Nothing (var:vars) =
+            if IntMap.member (getVar var) resCl
+            then find (Just var) vars
+            else find Nothing vars
+        find (Just x) (var:vars) =
+            if IntMap.member (getVar var) resCl
+            then Nothing
+            else find (Just x) vars
 
 resolution :: ResolutionClause -> Var -> Clause -> ResolutionClause
 resolution resCl var cl =
