@@ -18,7 +18,6 @@ preprocess (cls, (numVars, numClauses)) =
               , clauseCount   = length vectorCls
               , watchedLits   = IntMap.fromList $ zipWith watching [0..] formalCls
               , litsToClauses = IntMap.fromListWith (++) $ concat $ zipWith watchedBy [0..] formalCls
-              , varCount      = numVars
               },
     SolverState { assignment       = foldl' assignLiteral emptyAssignment unitLits
                 , queue            = enqueueUnitClauses unitLits emptyQueue

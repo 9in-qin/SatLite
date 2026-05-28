@@ -10,5 +10,4 @@ data ClauseDB = ClauseDB { clauses       :: Clauses
                          , clauseCount   :: Int
                          , watchedLits   :: WatchedLits
                          , litsToClauses :: LitsToClauses
-                         , varCount      :: VarCount
                          }
