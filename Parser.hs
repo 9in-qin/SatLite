@@ -1,6 +1,7 @@
 module Parser where
 
 import Data.List
+import Data.Char
 
 parse :: String -> Maybe ([[Int]], (Int, Int))
 parse input =
@@ -10,7 +11,7 @@ parse input =
                 Just line -> line
                 Nothing   -> error "No header line found"
         headerInfo  = parseHeaderLine headerLine
-        clauseLines = filter clauseLineOnly allLines
+        clauseLines = filter isClauseLine allLines
         clauses     = map (stringToInts . init) clauseLines
         ifEmptyCl   = any null clauses
     in (if ifEmptyCl then Nothing else Just (clauses, headerInfo))
@@ -24,12 +25,8 @@ parse input =
             "c" `isPrefixOf` line
 
         isClauseLine :: String -> Bool
-        isClauseLine line =
-            "0" `isSuffixOf` line
-
-        clauseLineOnly :: String -> Bool
-        clauseLineOnly line =
-            all ($ line) [not . isCommentLine, isClauseLine]
+        isClauseLine (firstChar : line) =
+            firstChar == '-' || isDigit firstChar
 
         stringToInts :: String -> [Int]
         stringToInts line =
