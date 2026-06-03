@@ -21,12 +21,12 @@ main = do
                     end <- getCPUTime
                     putStrLn "UNSAT"
                     let cpuTime = fromIntegral (end - start) / 10 ^ 12
-                    printf "CPU time: %0.3f sec\n" (cpuTime :: Double)
+                    printf "CPU time: %0.6f sec\n" (cpuTime :: Double)
                 Just parsingResult -> do
                     let (db, ss) = preprocess parsingResult
                     result <- evaluate (CDCL.cdcl db ss)
                     end    <- getCPUTime
                     print result
                     let cpuTime = fromIntegral (end - start) / 10 ^ 12
-                    printf "CPU time: %0.3f sec\n" (cpuTime :: Double)
+                    printf "CPU time: %0.6f sec\n" (cpuTime :: Double)
         _ -> putStrLn "CNF file required"
