@@ -5,8 +5,8 @@ import System.CPUTime
 import Text.Printf
 import Control.Exception
 
-import Parser
-import Preprocess
+import Preprocess.Parser
+import Preprocess.Preprocess
 import Engine.CDCL as CDCL
 
 main :: IO ()

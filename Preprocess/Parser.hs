@@ -1,4 +1,4 @@
-module Parser where
+module Preprocess.Parser where
 
 import Data.List
 import Data.Char

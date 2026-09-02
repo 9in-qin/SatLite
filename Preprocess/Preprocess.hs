@@ -1,4 +1,4 @@
-module Preprocess where
+module Preprocess.Preprocess where
 
 import qualified Data.Vector as Vector
 import qualified Data.IntMap as IntMap
