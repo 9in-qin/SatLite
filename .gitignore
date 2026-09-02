@@ -6,3 +6,4 @@ MainOld.hs
 Test.hs
 Test2.hs
 Engine/DPLL.hs
+*.prof
