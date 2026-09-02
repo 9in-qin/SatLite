@@ -7,3 +7,4 @@ Test.hs
 Test2.hs
 Engine/DPLL.hs
 *.prof
+CHANGELOG.md
