@@ -17,7 +17,7 @@ It was developed as my Master's research project at the University of Melbourne.
 
 ```bash
 cabal build
-cabal run haskell-sat-solver -- Examples/*.cnf
+cabal run SatLite -- Examples/*.cnf
 ```
 
 Example CNF instances are provided in the `Examples/` directory.

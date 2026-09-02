@@ -11,7 +11,7 @@ cabal-version:      3.0
 --   http://haskell.org/cabal/users-guide/
 --
 -- The name of the package.
-name:               haskell-sat-solver
+name:               SatLite
 
 -- The package version.
 -- See the Haskell package versioning policy (PVP) for standards
@@ -53,7 +53,7 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
-executable haskell-sat-solver
+executable SatLite
     main-is:          Main.hs
     hs-source-dirs:   app, Core, Decide, Engine, .
     build-depends:
