@@ -4,6 +4,8 @@ SatLite is a purely functional CDCL-based SAT solver implemented in Haskell.
 
 It was developed as my Master's research project at the University of Melbourne.
 
+**Author:** Chaoqin Zhang
+
 ## Features
 
 - Watched literals
